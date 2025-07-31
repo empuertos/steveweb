@@ -446,26 +446,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Site with PH IPTV Player</title>
+  <title>Site with Injected IPTV Player</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <style>
-    body { margin:0; font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif; background:#0f111a; color:#fff; display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px; }
-    h1 { margin:0; }
-    iframe {
-      width:100%;
-      max-width:1024px;
-      height:560px;
-      border:0;
-      border-radius:12px;
-      box-shadow:0 25px 60px -10px rgba(0,0,0,0.6);
-    }
-  </style>
 </head>
 <body>
-  <p>Below is the PH IPTV player:</p>
-  <iframe src="/player.html" title="PH IPTV Player" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+  <h1>Welcome</h1>
+  <div id="player-root">Loading player...</div>
+  <script type="module">
+    async function loadPlayer() {
+      const resp = await fetch('/player.html');
+      if (!resp.ok) {
+        document.getElementById('player-root').textContent = 'Failed to load player.';
+        return;
+      }
+      const html = await resp.text();
+      const root = document.getElementById('player-root');
+      root.innerHTML = html;
+      // Re-execute embedded scripts
+      const scripts = root.querySelectorAll('script');
+      scripts.forEach(old => {
+        const s = document.createElement('script');
+        if (old.src) {
+          s.src = old.src;
+        } else {
+          s.textContent = old.textContent;
+        }
+        s.type = old.type || 'text/javascript';
+        old.replaceWith(s);
+      });
+    }
+    loadPlayer();
+  </script>
 </body>
 </html>
+
 
 
 
