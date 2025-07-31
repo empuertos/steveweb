@@ -1,0 +1,4 @@
+/index.html            ← your main page (embeds or injects the player)
+/player.html          ← full standalone player (with its own <html>…)</player.html>
+/player.css           ← styles for the player
+/player.js           ← logic (playlist fetch, HLS, controls)
