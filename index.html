@@ -442,45 +442,243 @@
   
   
   
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Site with Injected IPTV Player</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>Universal Video Player</title>
+  <style>
+    :root {
+      --bg:#000;
+    }
+    * {box-sizing:border-box;}
+    body {
+      margin:0;
+      background: var(--bg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      color:#fff;
+    }
+    .player-wrapper {
+      position:relative;
+      width:100%;
+      max-width:960px;
+      aspect-ratio:16/9;
+      background:#111;
+      overflow:hidden;
+      border-radius:12px;
+      box-shadow:0 20px 60px -10px rgba(0,0,0,0.7);
+    }
+    video {
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      background:#000;
+      display:block;
+    }
+    .controls {
+      position:absolute;
+      bottom:8px;
+      left:8px;
+      right:8px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      backdrop-filter:blur(8px);
+      background:rgba(0,0,0,0.35);
+      border-radius:8px;
+      font-size:14px;
+    }
+    .btn {
+      cursor:pointer;
+      padding:6px 10px;
+      background:rgba(255,255,255,0.08);
+      border:none;
+      border-radius:6px;
+      color:#fff;
+      font-weight:600;
+    }
+    .progress {
+      flex:1;
+      position:relative;
+      height:6px;
+      background:rgba(255,255,255,0.2);
+      border-radius:3px;
+      overflow:hidden;
+    }
+    .progress-inner {
+      position:absolute;
+      left:0;
+      top:0;
+      height:100%;
+      width:0%;
+      background:rgba(0,150,255,0.9);
+    }
+    .time {
+      min-width:75px;
+      text-align:center;
+    }
+    .fullscreen {
+      margin-left:auto;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome</h1>
-  <div id="player-root">Loading player...</div>
-  <script type="module">
-    async function loadPlayer() {
-      const resp = await fetch('/player.html');
-      if (!resp.ok) {
-        document.getElementById('player-root').textContent = 'Failed to load player.';
-        return;
+
+  <div class="player-wrapper" id="playerWrapper">
+    <video id="video" playsinline webkit-playsinline preload="metadata" poster="" crossorigin="anonymous">
+      <!-- Primary source (MP4) -->
+      <source src="sample.mp4" type="video/mp4" />
+      <!-- Fallback for browsers not supporting MP4; HLS will be handled via hls.js below if needed -->
+      Your browser does not support HTML5 video.
+    </video>
+
+    <div class="controls" aria-label="Video controls">
+      <button class="btn" id="playPauseBtn">Play ▶️</button>
+      <div class="progress" aria-label="Playback progress" role="slider" tabindex="0" id="progressBar">
+        <div class="progress-inner" id="progressInner"></div>
+      </div>
+      <div class="time" id="timeDisplay">0:00 / 0:00</div>
+      <button class="btn" id="muteBtn">Mute 🔇</button>
+      <button class="btn fullscreen" id="fsBtn">⛶</button>
+    </div>
+  </div>
+
+  <!-- Optional: include hls.js for .m3u8 streams -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    const video = document.getElementById('video');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const fsBtn = document.getElementById('fsBtn');
+    const progressInner = document.getElementById('progressInner');
+    const progressBar = document.getElementById('progressBar');
+    const timeDisplay = document.getElementById('timeDisplay');
+
+    // Example: if you want to support HLS source fallback:
+    const hlsSource = 'sample.m3u8'; // replace with your .m3u8 URL
+    function setupHLS() {
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native support (Safari)
+        video.src = hlsSource;
+      } else if (window.Hls) {
+        const hls = new Hls();
+        hls.loadSource(hlsSource);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.ERROR, (e, data) => {
+          console.warn('HLS error', data);
+        });
       }
-      const html = await resp.text();
-      const root = document.getElementById('player-root');
-      root.innerHTML = html;
-      // Re-execute embedded scripts
-      const scripts = root.querySelectorAll('script');
-      scripts.forEach(old => {
-        const s = document.createElement('script');
-        if (old.src) {
-          s.src = old.src;
-        } else {
-          s.textContent = old.textContent;
-        }
-        s.type = old.type || 'text/javascript';
-        old.replaceWith(s);
-      });
     }
-    loadPlayer();
+
+    // Try to enable HLS if desired; comment out if only using mp4.
+    setupHLS();
+
+    // Utility formatting
+    function fmt(seconds) {
+      if (isNaN(seconds)) return '0:00';
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60).toString().padStart(2,'0');
+      return `${m}:${s}`;
+    }
+
+    // Sync UI
+    function updateTimeUI() {
+      const current = video.currentTime;
+      const total = video.duration;
+      progressInner.style.width = total ? ((current / total) * 100) + '%' : '0%';
+      timeDisplay.textContent = `${fmt(current)} / ${fmt(total)}`;
+    }
+
+    video.addEventListener('timeupdate', updateTimeUI);
+    video.addEventListener('durationchange', updateTimeUI);
+    video.addEventListener('loadedmetadata', updateTimeUI);
+    video.addEventListener('ended', () => {
+      playPauseBtn.textContent = 'Replay 🔁';
+    });
+
+    // Play / Pause
+    playPauseBtn.addEventListener('click', async () => {
+      if (video.paused) {
+        try {
+          await video.play();
+          playPauseBtn.textContent = 'Pause ⏸️';
+        } catch (e) {
+          console.warn('Playback prevented (autoplay policy):', e);
+          // Show UI hint if needed.
+        }
+      } else {
+        video.pause();
+        playPauseBtn.textContent = 'Play ▶️';
+      }
+    });
+
+    // Autoplay attempt on load (muted to satisfy policies)
+    window.addEventListener('load', async () => {
+      video.muted = true; // many browsers allow autoplay if muted
+      try {
+        await video.play();
+        playPauseBtn.textContent = 'Pause ⏸️';
+      } catch (e) {
+        playPauseBtn.textContent = 'Play ▶️';
+      }
+    });
+
+    // Mute toggle
+    muteBtn.addEventListener('click', () => {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? 'Unmute 🔈' : 'Mute 🔇';
+    });
+
+    // Progress seeking
+    progressBar.addEventListener('click', e => {
+      const rect = progressBar.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      if (!isNaN(video.duration)) {
+        video.currentTime = pct * video.duration;
+      }
+    });
+
+    // Keyboard accessibility for progress
+    progressBar.addEventListener('keydown', e => {
+      if (isNaN(video.duration)) return;
+      if (e.key === 'ArrowRight') {
+        video.currentTime = Math.min(video.duration, video.currentTime + 5);
+      } else if (e.key === 'ArrowLeft') {
+        video.currentTime = Math.max(0, video.currentTime - 5);
+      }
+    });
+
+    // Fullscreen (cross-browser)
+    fsBtn.addEventListener('click', () => {
+      const wrapper = document.getElementById('playerWrapper');
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      } else {
+        if (wrapper.requestFullscreen) wrapper.requestFullscreen();
+        else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
+      }
+    });
+
+    // Make sure iOS plays inline
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    // Visibility: resume on focus (helps if user switches tabs/windows)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && !video.paused) {
+        video.play().catch(() => {});
+      }
+    });
   </script>
 </body>
 </html>
-
-
 
 
 
