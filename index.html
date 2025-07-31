@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Steve's Live Page</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f6ff;
+      color: #222;
+      text-align: center;
+    }
+    header {
+      background-color: #3366cc;
+      color: white;
+      padding: 15px 10px;
+    }
+    .clock-weather {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+      padding: 20px;
+    }
+    .clock, .weather {
+      font-size: 1.2em;
+      margin: 10px;
+    }
+    .dropdown, audio, iframe, .radar {
+      margin: 20px auto;
+      max-width: 90%;
+    }
+    select {
+      padding: 10px;
+      font-size: 16px;
+    }
+    .radar iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+    @media (max-width: 600px) {
+      .clock-weather {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Welcome to Steve's Website</h1>
+  </header>
+
+</body>
+</html>
+
+
+
+
+
+
+<div id="date-time-container">
+  <div id="date">Loading date...</div>
+  <div id="ph-time">Loading time...</div>
+</div>
+
+<script>
+  function updateDateTime() {
+    const now = new Date();
+
+    const dateOptions = {
+      timeZone: 'Asia/Manila',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+    const timeOptions = {
+      timeZone: 'Asia/Manila',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    };
+
+    document.getElementById('date').textContent =
+      new Intl.DateTimeFormat('en-US', dateOptions).format(now);
+
+    document.getElementById('ph-time').textContent =
+      new Intl.DateTimeFormat('en-US', timeOptions).format(now);
+  }
+
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
+</script>
+
+<style>
+  #date-time-container {
+    font-family: Arial, sans-serif;
+    color: #FFFFFF;
+    font-size: 24px;
+    padding: 10px;
+    text-align: left;
+    position: absolute;
+    left: 20px; /* Move slightly to the right */
+    top: 20px;  /* Move slightly down */
+  }
+
+  #ph-time {
+    font-size: 32px;
+    margin-top: 5px;
+  }
+</style>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cebu Weather</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .weather-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      text-align: right;
+      background: #f0f8ff;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      max-width: 250px;
+    }
+    .weather-container h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
+      color: #333;
+    }
+    .weather-container p {
+      margin: 4px 0;
+      font-size: 0.95em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<div class="weather-container" id="weather">
+  <h2>Loading Cebu Weather...</h2>
+</div>
+
+<script>
+  const apiKey = 'f4a8040d77bcf2fca8ddc0acd72dc4f0';
+  const city = 'Cebu,PH';
+
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById('weather');
+      const temp = data.main.temp;
+      const condition = data.weather[0].description;
+      const humidity = data.main.humidity;
+      const wind = data.wind.speed;
+
+      container.innerHTML = `
+        <h2>Cebu Weather</h2>
+        <p><strong>Temp:</strong> ${temp} °C</p>
+        <p><strong>Condition:</strong> ${condition}</p>
+        <p><strong>Humidity:</strong> ${humidity}%</p>
+        <p><strong>Wind:</strong> ${wind} m/s</p>
+      `;
+    })
+    .catch(error => {
+      document.getElementById('weather').innerHTML = "<p>Weather info unavailable.</p>";
+      console.error('Error fetching weather:', error);
+    });
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Lotto Results</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .lotto-frame {
+      width: 100%;
+      max-width: 600px;
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+      margin: auto;
+    }
+
+    .lotto-frame iframe {
+      position: relative;
+      top: -1280px;
+      height: 1700px;
+      width: 100%;
+      border: 0;
+    }
+
+    .countdown {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h3>🎲 3D Lotto Results Today</h3>
+
+  <div class="lotto-frame">
+    <iframe 
+      id="lottoIframe"
+      src="https://www.lottopcso.com/swertres-result-today/" 
+      scrolling="no">
+    </iframe>
+  </div>
+
+  <div class="countdown">
+    ⏳ Refreshing in <span id="countdown">45</span> seconds...
+  </div>
+
+  <script>
+    const countdownElement = document.getElementById('countdown');
+    const iframe = document.getElementById('lottoIframe');
+    let secondsLeft = 45;
+
+    function updateCountdown() {
+      secondsLeft--;
+      countdownElement.textContent = secondsLeft;
+      if (secondsLeft <= 0) {
+        // Reload iframe with cache-busting timestamp
+        const cleanSrc = iframe.src.split('?')[0];
+        iframe.src = cleanSrc + '?t=' + new Date().getTime();
+        secondsLeft = 45; // Reset countdown
+      }
+    }
+
+    // Run every second
+    setInterval(updateCountdown, 1000);
+  </script>
+
+</body>
+</html>
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouTube Live Stream Selector</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 20px 0;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-color: #000;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .audio-section {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Select a YouTube Live Channel</h1>
+  <select id="channelSelect">
+    <option value="">-- Choose Channel --</option>
+    <option value="UCnf8Ejd3y2RboWNcOqHS24A">ATTY. RUPHIL F BAÑOC</option>
+    <option value="UCPTddoHsUattFCXD8u4p7Eg">ATTY. JURIL BROKA PATIÑO</option>
+    <option value="UC1S4Kg8_N5-1Rp6miCKEpsQ">XFM Cebu 88.3 | Official Channel</option>
+    <option value="UCstEtN0pgOmCf02EdXsGChw">KAPAMILYA CHANNEL</option>
+    <option value="UCKL5hAuzgFQsyrsQKgU0Qng">GMA NETWORK</option>
+    <option value="UCiFx0kZFjR29u0uJxTSq5MQ">TV5 Philippines</option>
+    <option value="UCJCUbMaY593_4SN1QPG7NFQ">PTV Philippines</option>
+    <option value="UCIxIecbM8okv6hI7iqGJm2A">RMN NETWORK</option>
+    <option value="UCupvZG-5ko_eiXAupbDfxWw">CNN</option>
+    <option value="UCDgW7mEUuVJuU-yRyZslrbw">ALL TV2</option>
+    <option value="UC46YJ9p0d6MSUXRZFRZrwGQ">RTVMalacanang</option>
+	<option value="UCpOm2kv1upnIFoOT7rSp6hg">PCSO GOV</option>
+    <option value="UC3XaG-7UVi2vD8ZZEMNnnpw">UNTV News and Rescue</option>
+    <option value="UCGEbMwiX774cseKvJqF9R2g">News5 Everywhere</option>
+    <option value="UCdnZdQxYXnbN4uWJg96oGxw">Rappler</option>
+    <option value="UCvRAX-ujvZ0eTMLGG2vki9w">INQUIRER.net</option>
+    <option value="UC5664f6TkaeHgwBly50DWZQ">Manila Bulletin</option>
+    <option value="UCsAueyuPjaPGcSfR3bIBPUg">Philstar News</option>
+    <option value="UCvi6hEzLM-Z_unKPSuuzKvg">ANC 24/7</option>
+    <option value="UCFZNDbxnZluWkXbK9IP_69w">CDN Digital</option>
+    <option value="UCrs5I6O7SzINZ0pumvhvMTQ">SunStar Web TV</option>
+    <option value="UC7941bBpZFenu_58hHnBkGQ">CCTN 47 OFFICIAL</option>
+    <option value="UCeY0bbntWzzVIaj2z3QigXg">NBC News</option>
+    <option value="UCYFgnkDYr-G5L_iy6DZdvSA">Super Radyo DZBB 594khz</option>
+    <option value="UCs_VNu-FQ0WcJnD4QkmIL5w">DZMM Teleradyo</option>
+    <option value="UCnYlMfpbCIg54cEyUiE42vw">NET25 News and Information</option>
+    <option value="UCi-D5IxBR2HahDyfJfqy7jA">One PH</option>
+    <option value="UCkw9o4FxDfJJiEHpq5JzDrQ">DYTR Bohol TV</option>
+    <option value="UCVVw9u0pZ3nnWxx7WyE8YkQ">Bombo Radyo Philippines</option>
+    <option value="UCetMicrNjXa_Pev2pjl-Vjw">Leo Lastimosa</option>
+
+  </select>
+
+  <div class="wrap" id="playerContainer" style="display: none;">
+    <iframe id="livePlayer"
+      src=""
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <script>
+    const select = document.getElementById("channelSelect");
+    const playerContainer = document.getElementById("playerContainer");
+    const iframe = document.getElementById("livePlayer");
+
+    select.addEventListener("change", function () {
+      const channelId = this.value;
+      if (channelId) {
+        iframe.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1`;
+        playerContainer.style.display = "flex";
+      } else {
+        iframe.src = "";
+        playerContainer.style.display = "none";
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+</body>
+</html>
+
+
+
+
+
+
+  <div class="audio-section">
+    <h2>DYHP612 Audio Streaming Live Cebu Philippines</h2>
+    <audio controls autoplay loop>
+      <source src="https://de3.amfmph.com/ssl/rmncebu?mp=/stream" type="audio/aac">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <script>
+    const channelSelect = document.getElementById('channelSelect');
+    const playerContainer = document.getElementById('playerContainer');
+    const livePlayer = document.getElementById('livePlayer');
+
+    channelSelect.addEventListener('change', () => {
+      const channelId = channelSelect.value;
+      if (channelId) {
+        livePlayer.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1`;
+        playerContainer.style.display = 'block';
+      } else {
+        livePlayer.src = '';
+        playerContainer.style.display = 'none';
+      }
+    });
+  </script>
+  
+  
+  
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Site with PH IPTV Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <style>
+    body { margin:0; font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif; background:#0f111a; color:#fff; display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px; }
+    h1 { margin:0; }
+    iframe {
+      width:100%;
+      max-width:1024px;
+      height:560px;
+      border:0;
+      border-radius:12px;
+      box-shadow:0 25px 60px -10px rgba(0,0,0,0.6);
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to My Website</h1>
+  <p>Below is the PH IPTV player:</p>
+  <iframe src="/player.html" title="PH IPTV Player" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+</body>
+</html>
+
+
+
+
+<h1>G1stX51677413X79268557X43426425X02903887X48405090X97592951X36751671
+            G2ndX87930868X79693801X28198839X10787943X01642065X43405314X05831064X58539749X93700422X50207461
+
+F05158511X24317591X41352780X53072337X66958056
+
+
+
+===>>>>>MOVIE LINK:
+http://kk.ct.ws
+
+https://www.lookmovie2.to/
+
+https://ww6.123moviesfree.net/
+
+
+https://iptv-org.github.io/iptv/countries/ph.m3u</h1>
+        
+
+</body>
+</html>
+
