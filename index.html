@@ -445,112 +445,643 @@
 
 
 
-
-  
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HLS (.m3u8) Playlist Player</title>
+  <title>PH IPTV Browser (with Search & Favorites)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    body {
-      background: #111;
-      color: #eee;
+    :root {
+      --bg:#0f1118;
+      --card:#1f2435;
+      --radius:10px;
+      --shadow:0 15px 40px -10px rgba(0,0,0,.6);
+      --accent:#7c5aff;
       font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
-      gap: 1rem;
+      color:#e5e9ff;
+    }
+    *{box-sizing:border-box;}
+    body {
+      margin:0;
+      background: linear-gradient(135deg,#0f1118 0%,#1f1f35 70%);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:1rem;
+      gap:1rem;
+    }
+    .container {
+      width:100%;
+      max-width: 1024px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:1rem;
+    }
+    .player-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding:1rem 1.25rem;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:0.75rem;
+    }
+    h1 {
+      margin:0;
+      font-size:1.9rem;
+      text-align:center;
+    }
+    .top-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      align-items:center;
+      justify-content: space-between;
+    }
+    .controls {
+      display:flex;
+      gap:1rem;
+      flex-wrap:wrap;
+      align-items:center;
+      flex:1;
+      min-width:260px;
+    }
+    .search-wrap {
+      position: relative;
+      flex:1;
+      min-width:200px;
+    }
+    .search-wrap input {
+      width:100%;
+      padding:0.5rem 0.75rem 0.5rem 2.5rem;
+      border-radius:6px;
+      border:none;
+      font-size:1rem;
+      background:#1d2040;
+      color:#e5e9ff;
+    }
+    .search-wrap .hint {
+      position:absolute;
+      left:8px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      font-size:0.9rem;
+      opacity:0.6;
+    }
+    select {
+      padding:0.5rem 0.75rem;
+      border-radius:6px;
+      border:none;
+      font-size:1rem;
+      background:#0f1118;
+      color:#e5e9ff;
+      flex:1;
+      min-width:220px;
+    }
+    .toggles {
+      display:flex;
+      gap:0.75rem;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .toggle {
+      display:flex;
+      align-items:center;
+      gap:4px;
+      font-size:0.85rem;
+    }
+    .channel-info {
+      display:flex;
+      align-items:center;
+      gap:0.75rem;
+      margin-top:0.25rem;
+    }
+    .channel-logo {
+      width:54px;
+      height:54px;
+      background:#1a1e36;
+      border-radius:8px;
+      flex-shrink:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .channel-logo img {
+      max-width:100%;
+      max-height:100%;
+      object-fit:contain;
+    }
+    .meta {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
     }
     video {
-      width: 100%;
-      max-width: 800px;
-      border: 2px solid #444;
-      border-radius: 8px;
-      background: black;
+      width:100%;
+      aspect-ratio:16/9;
+      background:black;
+      border-radius:8px;
+      outline:2px solid #2f3450;
+      margin-top:6px;
     }
-    .info {
-      font-size: 0.9rem;
+    .status {
+      font-size:0.82rem;
+      margin-top:4px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.5rem;
     }
-    .error {
-      color: #f66;
+    .error { color:#ff6b6b; }
+    .favorite-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size:1.1rem;
+      padding:4px;
+      border-radius:6px;
+      display:flex;
+      align-items:center;
+      gap:4px;
+      color: #e5e9ff;
+    }
+    .favorite-btn.favorited { color: gold; }
+    .small {
+      font-size:0.75rem;
+    }
+    .note {
+      font-size:0.75rem;
+      background: #1b1f37;
+      padding:8px 12px;
+      border-radius:6px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .favorite-list {
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      margin-bottom:4px;
+    }
+    .fav-pill {
+      background:#22284b;
+      padding:4px 10px;
+      border-radius:999px;
+      display:flex;
+      gap:6px;
+      align-items:center;
+      font-size:0.75rem;
+    }
+    .fav-pill button {
+      background:none;
+      border:none;
+      cursor:pointer;
+      padding:0;
+      margin-left:4px;
+      color:#bbb;
+    }
+    .refresh-btn {
+      padding:0.45rem 0.75rem;
+      background: transparent;
+      border:1px solid #555;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:0.9rem;
+      color:#e5e9ff;
+    }
+    .small-tag {
+      background: rgba(255,255,255,0.08);
+      padding:2px 6px;
+      border-radius:4px;
+      font-size:0.6rem;
+      margin-left:4px;
     }
   </style>
 </head>
 <body>
-  <h1>HLS Playlist Player</h1>
+  <div class="container">
+    <div class="player-card" aria-label="Philippines IPTV Browser with search and favorites">
+      <h1>PH IPTV Browser</h1>
 
-  <video id="video" controls crossorigin playsinline></video>
-  <div class="info" id="status">Initializing...</div>
-  <div class="info">
-    Replace the <code>playlistUrl</code> variable in the script with your .m3u8 URL.
+      <div class="top-row">
+        <div class="controls" aria-label="Channel selection controls">
+          <div class="search-wrap">
+            <div class="hint">🔍 Search channels…</div>
+            <input id="search" placeholder="Filter channels" aria-label="Search channels" />
+          </div>
+          <select id="channelSelect" aria-label="Select channel">
+            <option>Loading...</option>
+          </select>
+          <button class="refresh-btn" id="refresh">Reload</button>
+        </div>
+        <div class="toggles">
+          <label class="toggle">
+            <input type="checkbox" id="autoplay" /> Autoplay
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="mutedOnLoad" /> Muted on load
+          </label>
+        </div>
+      </div>
+
+      <div class="favorite-list" aria-label="Favorite channels list" id="favList">
+        <!-- favorite pills -->
+      </div>
+
+      <div class="channel-info" id="currentInfo" aria-live="polite">
+        <div class="channel-logo" id="logo"></div>
+        <div class="meta">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div id="channelName"><strong>Loading...</strong></div>
+            <button class="favorite-btn" id="favBtn" aria-label="Favorite toggle">☆</button>
+          </div>
+          <div class="status" id="status">Fetching playlist...</div>
+        </div>
+      </div>
+
+      <video id="video" controls crossorigin playsinline></video>
+
+      <div class="note">
+        <div style="flex:1;">
+          Source playlist: <code>https://iptv-org.github.io/iptv/countries/ph.m3u8</code>.  
+          Search, favorite, and switch channels. Favorites persist; last channel is remembered.  
+          Autoplay requires a user gesture in many browsers unless muted.  
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- hls.js from CDN -->
+  <!-- hls.js -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
   <script>
-    const video = document.getElementById('video');
-    const statusEl = document.getElementById('status');
-
-    // <<-- put your .m3u8 playlist URL here: -->
     const playlistUrl = 'https://iptv-org.github.io/iptv/countries/ph.m3u8';
+    const select = document.getElementById('channelSelect');
+    const statusEl = document.getElementById('status');
+    const video = document.getElementById('video');
+    const channelNameEl = document.getElementById('channelName');
+    const logoContainer = document.getElementById('logo');
+    const refreshBtn = document.getElementById('refresh');
+    const searchInput = document.getElementById('search');
+    const favBtn = document.getElementById('favBtn');
+    const favListEl = document.getElementById('favList');
+    const autoplayCheckbox = document.getElementById('autoplay');
+    const mutedOnLoadCheckbox = document.getElementById('mutedOnLoad');
 
-    function setStatus(msg, isError = false) {
+    let channels = []; // full parsed list
+    let filtered = [];
+    let hls = null;
+
+    // persistence keys
+    const LS_FAV = 'phiptv_favorites';
+    const LS_LAST = 'phiptv_last';
+    const LS_AUTOPLAY = 'phiptv_autoplay';
+    const LS_MUTED = 'phiptv_muted';
+
+    function getFavorites() {
+      try {
+        return JSON.parse(localStorage.getItem(LS_FAV)) || [];
+      } catch { return []; }
+    }
+    function saveFavorites(list) {
+      localStorage.setItem(LS_FAV, JSON.stringify(list));
+    }
+    function isFavorited(name) {
+      return getFavorites().includes(name);
+    }
+    function toggleFavorite(name) {
+      const favs = getFavorites();
+      if (favs.includes(name)) {
+        const idx = favs.indexOf(name);
+        favs.splice(idx,1);
+      } else {
+        favs.push(name);
+      }
+      saveFavorites(favs);
+      renderFavPills();
+      updateFavButton();
+      populateSelect(); // reorder
+    }
+
+    function saveLast(index) {
+      localStorage.setItem(LS_LAST, index);
+    }
+    function getLast() {
+      return parseInt(localStorage.getItem(LS_LAST));
+    }
+    function saveAutoplay(val) {
+      localStorage.setItem(LS_AUTOPLAY, val ? '1' : '0');
+    }
+    function getAutoplay() {
+      return localStorage.getItem(LS_AUTOPLAY) === '1';
+    }
+    function saveMuted(val) {
+      localStorage.setItem(LS_MUTED, val ? '1' : '0');
+    }
+    function getMuted() {
+      return localStorage.getItem(LS_MUTED) === '1';
+    }
+
+    function setStatus(msg, isError=false) {
       statusEl.textContent = msg;
-      statusEl.classList.toggle('error', isError);
+      statusEl.classList.toggle('error', !!isError);
     }
 
-    // Browser supports HLS natively? (Safari, iOS)
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = playlistUrl;
-      video.addEventListener('loadedmetadata', () => {
-        setStatus('Playing via native HLS support.');
-        // video.play(); // uncomment if you want autoplay (might be blocked without user gesture)
-      });
-      video.addEventListener('error', (e) => {
-        setStatus('Native playback error. See console for details.', true);
-        console.error('Video element error:', e);
-      });
-    } else if (window.Hls && Hls.isSupported()) {
-      const hls = new Hls({
-        // Optional config: enableDebug: true
-      });
-      hls.loadSource(playlistUrl);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        setStatus('hls.js attached, loading playlist...');
-      });
-      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        setStatus(`Loaded manifest, found ${data.levels.length} quality level(s).`);
-        // video.play(); // optional autoplay
-      });
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        const { type, details, fatal } = data;
-        console.warn('hls.js error:', data);
-        if (fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              setStatus('Fatal network error, trying to recover...', true);
-              hls.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              setStatus('Fatal media error, attempting recovery...', true);
-              hls.recoverMediaError();
-              break;
-            default:
-              setStatus('Unrecoverable error, destroying hls instance.', true);
-              hls.destroy();
-              break;
-          }
-        } else {
-          setStatus(`Non-fatal error: ${details}`);
-        }
-      });
-    } else {
-      setStatus('HLS not supported in this browser.', true);
+    function clearLogo() {
+      logoContainer.innerHTML = '';
     }
+    function setLogo(src) {
+      logoContainer.innerHTML = '';
+      if (!src) return;
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'logo';
+      img.onerror = () => { /* silent */ };
+      logoContainer.appendChild(img);
+    }
+
+    function parseM3U8(content, baseUrl) {
+      const lines = content.split(/\r?\n/);
+      const result = [];
+      let current = null;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        if (line.startsWith('#EXTINF')) {
+          const namePart = line.split(',').slice(1).join(',').trim();
+          const logoMatch = /tvg-logo="([^"]+)"/i.exec(line);
+          current = {
+            name: namePart || 'Unknown',
+            logo: logoMatch ? logoMatch[1] : null,
+            url: null
+          };
+        } else if (line.startsWith('#')) {
+          // other tag
+        } else {
+          if (current) {
+            try {
+              const resolved = new URL(line, baseUrl).href;
+              current.url = resolved;
+            } catch {
+              current.url = line;
+            }
+            result.push(current);
+            current = null;
+          }
+        }
+      }
+      return result;
+    }
+
+    function sortWithFavorites(arr) {
+      const favs = getFavorites();
+      const favSet = new Set(favs);
+      const favoriteItems = arr.filter(c => favSet.has(c.name));
+      const others = arr.filter(c => !favSet.has(c.name));
+      return [...favoriteItems, ...others];
+    }
+
+    function populateSelect() {
+      // apply search filter
+      const term = searchInput.value.trim().toLowerCase();
+      if (term) {
+        filtered = channels.filter(c => c.name.toLowerCase().includes(term));
+      } else {
+        filtered = [...channels];
+      }
+      // apply favorite sorting
+      filtered = sortWithFavorites(filtered);
+      select.innerHTML = '';
+      if (!filtered.length) {
+        const opt = document.createElement('option');
+        opt.textContent = 'No matching channels';
+        opt.value = '';
+        select.appendChild(opt);
+        select.disabled = true;
+        return;
+      }
+      filtered.forEach((ch, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = ch.name + (isFavorited(ch.name)? ' ★' : '');
+        if (isFavorited(ch.name)) {
+          opt.dataset.fav = '1';
+        }
+        select.appendChild(opt);
+      });
+      select.disabled = false;
+
+      // restore last if present and still in filtered
+      const last = getLast();
+      if (!isNaN(last) && channels[last]) {
+        // find its index in filtered
+        const name = channels[last].name;
+        const idxInFiltered = filtered.findIndex(c => c.name === name);
+        if (idxInFiltered !== -1) {
+          select.value = idxInFiltered;
+        }
+      }
+    }
+
+    function renderFavPills() {
+      const favs = getFavorites();
+      favListEl.innerHTML = '';
+      favs.forEach(name => {
+        const ch = channels.find(c=>c.name===name);
+        if (!ch) return;
+        const pill = document.createElement('div');
+        pill.className = 'fav-pill';
+        pill.textContent = ch.name;
+        const rem = document.createElement('button');
+        rem.setAttribute('aria-label', 'Remove favorite');
+        rem.innerHTML = '✕';
+        rem.addEventListener('click', () => {
+          toggleFavorite(ch.name);
+        });
+        pill.appendChild(rem);
+        pill.addEventListener('click', () => {
+          // select this channel
+          const idx = filtered.findIndex(c => c.name === ch.name);
+          if (idx !== -1) {
+            select.value = idx;
+            applySelection();
+          }
+        });
+        favListEl.appendChild(pill);
+      });
+    }
+
+    function updateFavButton() {
+      const idx = parseInt(select.value);
+      if (isNaN(idx) || !filtered[idx]) {
+        favBtn.style.visibility = 'hidden';
+        return;
+      }
+      favBtn.style.visibility = 'visible';
+      const name = filtered[idx].name;
+      if (isFavorited(name)) {
+        favBtn.classList.add('favorited');
+        favBtn.textContent = '★';
+        favBtn.setAttribute('aria-label', 'Unfavorite channel');
+      } else {
+        favBtn.classList.remove('favorited');
+        favBtn.textContent = '☆';
+        favBtn.setAttribute('aria-label', 'Favorite channel');
+      }
+    }
+
+    async function loadPlaylist() {
+      setStatus('Fetching playlist...');
+      select.disabled = true;
+      select.innerHTML = '<option>Loading...</option>';
+      try {
+        const resp = await fetch(playlistUrl);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const text = await resp.text();
+        channels = parseM3U8(text, playlistUrl);
+        if (!channels.length) {
+          setStatus('No channels parsed from playlist.', true);
+          select.innerHTML = '<option>No channels</option>';
+          return;
+        }
+        populateSelect();
+        renderFavPills();
+        updateFavButton();
+        setStatus(`Loaded ${channels.length} channels.`);
+        // if autoplay enabled and a last exists, play it
+        const shouldAutoplay = autoplayCheckbox.checked;
+        if (shouldAutoplay) {
+          applySelection();
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus('Failed to load playlist: ' + err.message, true);
+        select.innerHTML = '<option>Error</option>';
+      }
+    }
+
+    function destroyHls() {
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
+      video.src = '';
+    }
+
+    function applySelection() {
+      const idx = parseInt(select.value);
+      if (isNaN(idx) || !filtered[idx]) return;
+      const channel = filtered[idx];
+      channelNameEl.innerHTML = `<strong>${channel.name}</strong>`;
+      clearLogo();
+      if (channel.logo) setLogo(channel.logo);
+      else { /* leave blank */ }
+
+      updateFavButton();
+      saveLast(channels.findIndex(c => c.name === channel.name)); // global index
+
+      // load stream
+      setStatus('Loading channel...');
+      destroyHls();
+      const src = channel.url;
+      if (!src) {
+        setStatus('Channel has no URL.', true);
+        return;
+      }
+
+      // apply muted-on-load
+      video.muted = mutedOnLoadCheckbox.checked;
+
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+        video.addEventListener('loadedmetadata', () => {
+          setStatus('Playing (native HLS).');
+          if (autoplayCheckbox.checked) video.play().catch(()=>{});
+        }, { once: true });
+        video.addEventListener('error', (e) => {
+          setStatus('Native playback error.', true);
+          console.error('Video error', e);
+        }, { once: true });
+      } else if (window.Hls && Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+          setStatus('hls.js attached, parsing manifest...');
+        });
+        hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+          setStatus(`Playing (${data.levels.length} quality level(s)).`);
+          if (autoplayCheckbox.checked) video.play().catch(()=>{});
+        });
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          const { type, details, fatal } = data;
+          console.warn('hls.js error', data);
+          if (fatal) {
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                setStatus('Network error, retrying...', true);
+                hls.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                setStatus('Media error, recovering...', true);
+                hls.recoverMediaError();
+                break;
+              default:
+                setStatus('Unrecoverable error.', true);
+                hls.destroy();
+                break;
+            }
+          } else {
+            setStatus(`Warning: ${details}`);
+          }
+        });
+      } else {
+        setStatus('HLS not supported in this browser.', true);
+      }
+    }
+
+    // event listeners
+    select.addEventListener('change', () => {
+      applySelection();
+    });
+    refreshBtn.addEventListener('click', () => {
+      loadPlaylist();
+    });
+    searchInput.addEventListener('input', () => {
+      populateSelect();
+      updateFavButton();
+    });
+    favBtn.addEventListener('click', () => {
+      const idx = parseInt(select.value);
+      if (isNaN(idx) || !filtered[idx]) return;
+      toggleFavorite(filtered[idx].name);
+    });
+    autoplayCheckbox.addEventListener('change', () => {
+      saveAutoplay(autoplayCheckbox.checked);
+    });
+    mutedOnLoadCheckbox.addEventListener('change', () => {
+      saveMuted(mutedOnLoadCheckbox.checked);
+    });
+
+    // initialize toggles from storage
+    autoplayCheckbox.checked = getAutoplay();
+    mutedOnLoadCheckbox.checked = getMuted();
+
+    // persist changes
+    autoplayCheckbox.addEventListener('change', () => {
+      saveAutoplay(autoplayCheckbox.checked);
+    });
+    mutedOnLoadCheckbox.addEventListener('change', () => {
+      saveMuted(mutedOnLoadCheckbox.checked);
+    });
+
+    // initial load
+    loadPlaylist();
   </script>
 </body>
 </html>
