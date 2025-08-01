@@ -439,6 +439,130 @@
       }
     });
   </script>
+
+
+
+
+
+
+
+#!/usr/bin/env python3
+"""
+Fetch and parse the Philippines IPTV M3U playlist from iptv-org,
+output structured JSON, and optionally save to files.
+"""
+
+import requests
+import re
+import json
+import argparse
+from pathlib import Path
+from typing import List, Dict, Optional
+
+M3U_URL = "https://iptv-org.github.io/iptv/countries/ph.m3u"
+
+EXTINF_RE = re.compile(r'#EXTINF:-?\d+(?:\s+(.*))?,\s*(.*)')  # captures attributes and display name
+ATTR_RE = re.compile(r'([A-Za-z0-9\-]+?)="(.*?)"')  # key="value" pairs
+
+def parse_extinf(line: str) -> Dict:
+    """
+    Parse an #EXTINF line into its metadata.
+    Returns dict with attributes and name.
+    """
+    m = EXTINF_RE.match(line)
+    if not m:
+        return {}
+    raw_attrs, display_name = m.groups()
+    attrs = {}
+    if raw_attrs:
+        for attr_match in ATTR_RE.finditer(raw_attrs):
+            key, val = attr_match.groups()
+            attrs[key] = val
+    return {
+        "name": display_name.strip(),
+        "attributes": attrs
+    }
+
+def fetch_playlist(url: str) -> str:
+    r = requests.get(url, timeout=15)
+    r.raise_for_status()
+    return r.text
+
+def parse_m3u(content: str) -> List[Dict]:
+    """
+    Parses M3U content into a list of channel dicts.
+    Each dict includes metadata and the stream URL.
+    """
+    lines = [ln.strip() for ln in content.splitlines() if ln.strip()]
+    channels = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if line.startswith('#EXTINF'):
+            meta = parse_extinf(line)
+            # next non-comment line should be the URL
+            url = None
+            j = i + 1
+            while j < len(lines):
+                if not lines[j].startswith('#'):
+                    url = lines[j]
+                    break
+                j += 1
+            channel = {
+                "name": meta.get("name"),
+                "attributes": meta.get("attributes", {}),
+                "url": url
+            }
+            channels.append(channel)
+            i = j + 1 if url else i + 1
+        else:
+            i += 1
+    return channels
+
+def save_json(channels: List[Dict], path: Path):
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(channels, f, ensure_ascii=False, indent=2)
+
+def main():
+    parser = argparse.ArgumentParser(description="Fetch and parse PH IPTV M3U into JSON.")
+    parser.add_argument('--url', default=M3U_URL, help="M3U playlist URL")
+    parser.add_argument('--out-json', default="ph_channels.json", help="Output JSON file")
+    parser.add_argument('--out-m3u', default="ph.m3u", help="Save raw M3U to file")
+    parser.add_argument('--filter-name', default=None, help="Case-insensitive substring filter on channel name")
+    parser.add_argument('--limit', type=int, default=None, help="Max number of channels to display")
+    args = parser.parse_args()
+
+    print(f"Fetching playlist from {args.url} ...")
+    content = fetch_playlist(args.url)
+    Path(args.out_m3u).write_text(content, encoding='utf-8')
+    print(f"Saved raw playlist to {args.out_m3u}")
+
+    channels = parse_m3u(content)
+    print(f"Parsed {len(channels)} channels.")
+
+    if args.filter_name:
+        filtered = [c for c in channels if args.filter_name.lower() in (c["name"] or "").lower()]
+    else:
+        filtered = channels
+
+    if args.limit:
+        filtered = filtered[: args.limit]
+
+    # Show summary
+    for idx, ch in enumerate(filtered, start=1):
+        name = ch.get("name", "<unknown>")
+        group = ch["attributes"].get("group-title", "")
+        logo = ch["attributes"].get("tvg-logo", "")
+        url = ch.get("url", "")
+        print(f"{idx}. {name} | group: {group} | logo: {logo}\n   -> {url}")
+
+    # Save full parsed JSON
+    save_json(channels, Path(args.out_json))
+    print(f"Full parsed JSON saved to {args.out_json}")
+
+if __name__ == "__main__":
+    main()
+
   
   
   
