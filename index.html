@@ -447,7 +447,114 @@
 
 
   
-  
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HLS (.m3u8) Playlist Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    video {
+      width: 100%;
+      max-width: 800px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      background: black;
+    }
+    .info {
+      font-size: 0.9rem;
+    }
+    .error {
+      color: #f66;
+    }
+  </style>
+</head>
+<body>
+  <h1>HLS Playlist Player</h1>
+
+  <video id="video" controls crossorigin playsinline></video>
+  <div class="info" id="status">Initializing...</div>
+  <div class="info">
+    Replace the <code>playlistUrl</code> variable in the script with your .m3u8 URL.
+  </div>
+
+  <!-- hls.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
+  <script>
+    const video = document.getElementById('video');
+    const statusEl = document.getElementById('status');
+
+    // <<-- put your .m3u8 playlist URL here: -->
+    const playlistUrl = 'https://example.com/your/playlist.m3u8';
+
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.classList.toggle('error', isError);
+    }
+
+    // Browser supports HLS natively? (Safari, iOS)
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = playlistUrl;
+      video.addEventListener('loadedmetadata', () => {
+        setStatus('Playing via native HLS support.');
+        // video.play(); // uncomment if you want autoplay (might be blocked without user gesture)
+      });
+      video.addEventListener('error', (e) => {
+        setStatus('Native playback error. See console for details.', true);
+        console.error('Video element error:', e);
+      });
+    } else if (window.Hls && Hls.isSupported()) {
+      const hls = new Hls({
+        // Optional config: enableDebug: true
+      });
+      hls.loadSource(playlistUrl);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+        setStatus('hls.js attached, loading playlist...');
+      });
+      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+        setStatus(`Loaded manifest, found ${data.levels.length} quality level(s).`);
+        // video.play(); // optional autoplay
+      });
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        const { type, details, fatal } = data;
+        console.warn('hls.js error:', data);
+        if (fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              setStatus('Fatal network error, trying to recover...', true);
+              hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              setStatus('Fatal media error, attempting recovery...', true);
+              hls.recoverMediaError();
+              break;
+            default:
+              setStatus('Unrecoverable error, destroying hls instance.', true);
+              hls.destroy();
+              break;
+          }
+        } else {
+          setStatus(`Non-fatal error: ${details}`);
+        }
+      });
+    } else {
+      setStatus('HLS not supported in this browser.', true);
+    }
+  </script>
+</body>
+</html>
+
   
 
 
