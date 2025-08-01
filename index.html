@@ -445,123 +445,422 @@
 
 
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PH IPTV Playlist Viewer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: #f5f7fa;
+      color: #1f2d3a;
+    }
+    header {
+      padding: 1rem;
+      background: #1f2d3a;
+      color: white;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      flex: 1;
+    }
+    #controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    input[type="text"] {
+      padding: 0.5rem .75rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    #channel-list {
+      width: 360px;
+      min-width: 280px;
+      max-width: 420px;
+      border-right: 1px solid #e1e8f0;
+      overflow: auto;
+      padding: 1rem;
+      background: white;
+    }
+    #player-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      overflow: auto;
+    }
+    .channel {
+      padding: 0.5rem;
+      border-bottom: 1px solid #e1e8f0;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .channel:hover {
+      background: #eef4fa;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      background: #ddd;
+      border-radius: 4px;
+      object-fit: contain;
+    }
+    .info {
+      flex: 1;
+      min-width: 0;
+    }
+    .name {
+      font-weight: 600;
+      margin: 0;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .meta {
+      font-size: 0.65rem;
+      color: #555;
+      margin-top: 2px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    #video-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      max-height: 60vh;
+      background: black;
+    }
+    #now-playing {
+      margin: 0.75rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .playing-info {
+      flex: 1;
+      min-width: 180px;
+    }
+    .playing-title {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    .playing-sub {
+      font-size: 0.8rem;
+      margin: 2px 0 0 0;
+      color: #666;
+    }
+    #errors {
+      color: #b33;
+      margin-top: 0.5rem;
+    }
+    .small {
+      font-size: 0.65rem;
+      color: #888;
+    }
+    .btn {
+      padding: 0.45rem .85rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      background: #1f2d3a;
+      color: white;
+      font-size: 0.85rem;
+    }
+    .btn-secondary {
+      background: #5f6f8f;
+    }
+    #status {
+      font-size: 0.65rem;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+  </style>
+  <!-- hls.js for playing .m3u8 in non-Safari browsers -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+  <header>
+    <h1>Philippines IPTV Viewer</h1>
+    <div id="controls">
+      <input id="search" placeholder="Filter channel name..." aria-label="Filter channels" />
+      <button id="refresh" class="btn btn-secondary">Refresh</button>
+    </div>
+    <div id="status" class="small">Loading...</div>
+  </header>
+  <main>
+    <aside id="channel-list">
+      <div class="small">Source: iptv-org Philippines M3U playlist. Parsed channels will appear below.</div>
+      <div id="list-content"></div>
+    </aside>
+    <section id="player-pane">
+      <div id="video-wrapper">
+        <video id="video" controls playsinline></video>
+      </div>
+      <div id="now-playing">
+        <div class="playing-info">
+          <p class="playing-title" id="playing-name">Nothing selected</p>
+          <p class="playing-sub" id="playing-group"></p>
+        </div>
+        <div id="logo-holder">
+          <img id="playing-logo" src="" alt="" style="height:48px;display:none;border-radius:4px;object-fit:contain;" />
+        </div>
+      </div>
+      <div id="errors"></div>
+      <div class="small">Playlist URL: <code>https://iptv-org.github.io/iptv/countries/ph.m3u</code></div>
+    </section>
+  </main>
 
-#!/usr/bin/env python3
-"""
-Fetch and parse the Philippines IPTV M3U playlist from iptv-org,
-output structured JSON, and optionally save to files.
-"""
+  <script>
+    const PLAYLIST_URL = "https://iptv-org.github.io/iptv/countries/ph.m3u";
+    let channels = [];
+    const listEl = document.getElementById("list-content");
+    const searchInput = document.getElementById("search");
+    const statusEl = document.getElementById("status");
+    const video = document.getElementById("video");
+    const playingName = document.getElementById("playing-name");
+    const playingGroup = document.getElementById("playing-group");
+    const playingLogo = document.getElementById("playing-logo");
+    const errorsEl = document.getElementById("errors");
+    let hls = null;
 
-import requests
-import re
-import json
-import argparse
-from pathlib import Path
-from typing import List, Dict, Optional
-
-M3U_URL = "https://iptv-org.github.io/iptv/countries/ph.m3u"
-
-EXTINF_RE = re.compile(r'#EXTINF:-?\d+(?:\s+(.*))?,\s*(.*)')  # captures attributes and display name
-ATTR_RE = re.compile(r'([A-Za-z0-9\-]+?)="(.*?)"')  # key="value" pairs
-
-def parse_extinf(line: str) -> Dict:
-    """
-    Parse an #EXTINF line into its metadata.
-    Returns dict with attributes and name.
-    """
-    m = EXTINF_RE.match(line)
-    if not m:
-        return {}
-    raw_attrs, display_name = m.groups()
-    attrs = {}
-    if raw_attrs:
-        for attr_match in ATTR_RE.finditer(raw_attrs):
-            key, val = attr_match.groups()
-            attrs[key] = val
-    return {
-        "name": display_name.strip(),
-        "attributes": attrs
+    function setStatus(text) {
+      statusEl.textContent = text;
     }
 
-def fetch_playlist(url: str) -> str:
-    r = requests.get(url, timeout=15)
-    r.raise_for_status()
-    return r.text
+    function parseEXTINF(line) {
+      // e.g.: #EXTINF:-1 tvg-id="..." tvg-name="..." group-title="News",Channel Name
+      const obj = { attributes: {}, name: "" };
+      const commaIndex = line.indexOf(",");
+      if (commaIndex === -1) return obj;
+      const metaPart = line.slice(0, commaIndex);
+      const namePart = line.slice(commaIndex + 1).trim();
+      obj.name = namePart;
+      // extract key="value"
+      const attrRegex = /([A-Za-z0-9\-]+?)="(.*?)"/g;
+      let m;
+      while ((m = attrRegex.exec(metaPart)) !== null) {
+        obj.attributes[m[1]] = m[2];
+      }
+      return obj;
+    }
 
-def parse_m3u(content: str) -> List[Dict]:
-    """
-    Parses M3U content into a list of channel dicts.
-    Each dict includes metadata and the stream URL.
-    """
-    lines = [ln.strip() for ln in content.splitlines() if ln.strip()]
-    channels = []
-    i = 0
-    while i < len(lines):
-        line = lines[i]
-        if line.startswith('#EXTINF'):
-            meta = parse_extinf(line)
-            # next non-comment line should be the URL
-            url = None
-            j = i + 1
-            while j < len(lines):
-                if not lines[j].startswith('#'):
-                    url = lines[j]
-                    break
-                j += 1
-            channel = {
-                "name": meta.get("name"),
-                "attributes": meta.get("attributes", {}),
-                "url": url
+    function renderList(filtered) {
+      listEl.innerHTML = "";
+      if (filtered.length === 0) {
+        listEl.innerHTML = "<div class='small'>No channels match filter.</div>";
+        return;
+      }
+      filtered.forEach((ch, idx) => {
+        const div = document.createElement("div");
+        div.className = "channel";
+        div.dataset.index = idx;
+
+        const logoImg = document.createElement("img");
+        logoImg.className = "logo";
+        if (ch.attributes["tvg-logo"]) {
+          logoImg.src = ch.attributes["tvg-logo"];
+          logoImg.alt = ch.name + " logo";
+        } else {
+          logoImg.src = "";
+          logoImg.style.background = "#ccc";
+        }
+
+        const info = document.createElement("div");
+        info.className = "info";
+        const nameP = document.createElement("p");
+        nameP.className = "name";
+        nameP.textContent = ch.name || "(no name)";
+
+        const metaDiv = document.createElement("div");
+        metaDiv.className = "meta";
+        if (ch.attributes["group-title"]) {
+          const g = document.createElement("span");
+          g.textContent = ch.attributes["group-title"];
+          g.title = "Group";
+          metaDiv.appendChild(g);
+        }
+        if (ch.attributes["tvg-id"]) {
+          const t = document.createElement("span");
+          t.textContent = ch.attributes["tvg-id"];
+          t.title = "tvg-id";
+          metaDiv.appendChild(t);
+        }
+        info.appendChild(nameP);
+        info.appendChild(metaDiv);
+
+        div.appendChild(logoImg);
+        div.appendChild(info);
+
+        div.addEventListener("click", () => {
+          playChannel(ch);
+        });
+
+        listEl.appendChild(div);
+      });
+    }
+
+    function applyFilter() {
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = channels.filter(c => {
+        return (!q) || (c.name && c.name.toLowerCase().includes(q));
+      });
+      renderList(filtered);
+    }
+
+    async function loadPlaylist() {
+      setStatus("Fetching playlist...");
+      errorsEl.textContent = "";
+      try {
+        const resp = await fetch(PLAYLIST_URL);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const text = await resp.text();
+        parseM3U(text);
+        setStatus(`Loaded ${channels.length} channels.`);
+
+        applyFilter();
+      } catch (err) {
+        setStatus("Failed to load playlist.");
+        errorsEl.textContent = "Error fetching/parsing playlist: " + err.message;
+        console.error(err);
+      }
+    }
+
+    function parseM3U(content) {
+      channels = [];
+      const lines = content.split(/\r?\n/).map(l => l.trim()).filter(l => l !== "");
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (line.startsWith("#EXTINF")) {
+          const meta = parseEXTINF(line);
+          // next non-comment line is url
+          let url = null;
+          for (let j = i + 1; j < lines.length; j++) {
+            if (!lines[j].startsWith("#")) {
+              url = lines[j];
+              break;
             }
-            channels.append(channel)
-            i = j + 1 if url else i + 1
-        else:
-            i += 1
-    return channels
+          }
+          channels.push({
+            name: meta.name,
+            attributes: meta.attributes,
+            url: url
+          });
+        }
+      }
+    }
 
-def save_json(channels: List[Dict], path: Path):
-    with open(path, 'w', encoding='utf-8') as f:
-        json.dump(channels, f, ensure_ascii=False, indent=2)
+    function playChannel(ch) {
+      if (!ch.url) {
+        errorsEl.textContent = "No URL for this channel.";
+        return;
+      }
+      errorsEl.textContent = "";
+      playingName.textContent = ch.name || "(unknown)";
+      playingGroup.textContent = ch.attributes["group-title"] || "";
+      if (ch.attributes["tvg-logo"]) {
+        playingLogo.src = ch.attributes["tvg-logo"];
+        playingLogo.style.display = "inline-block";
+      } else {
+        playingLogo.style.display = "none";
+      }
 
-def main():
-    parser = argparse.ArgumentParser(description="Fetch and parse PH IPTV M3U into JSON.")
-    parser.add_argument('--url', default=M3U_URL, help="M3U playlist URL")
-    parser.add_argument('--out-json', default="ph_channels.json", help="Output JSON file")
-    parser.add_argument('--out-m3u', default="ph.m3u", help="Save raw M3U to file")
-    parser.add_argument('--filter-name', default=None, help="Case-insensitive substring filter on channel name")
-    parser.add_argument('--limit', type=int, default=None, help="Max number of channels to display")
-    args = parser.parse_args()
+      const src = ch.url;
 
-    print(f"Fetching playlist from {args.url} ...")
-    content = fetch_playlist(args.url)
-    Path(args.out_m3u).write_text(content, encoding='utf-8')
-    print(f"Saved raw playlist to {args.out_m3u}")
+      // clean existing hls if any
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
 
-    channels = parse_m3u(content)
-    print(f"Parsed {len(channels)} channels.")
+      if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // Native (Safari)
+        video.src = src;
+        video.play().catch(e => {
+          console.warn("Play promise rejected", e);
+        });
+      } else if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          console.warn("hls.js error", data);
+          if (data.fatal) {
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                errorsEl.textContent = "Network error while loading stream.";
+                hls.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                errorsEl.textContent = "Media decode error.";
+                hls.recoverMediaError();
+                break;
+              default:
+                errorsEl.textContent = "Fatal error, cannot play stream.";
+                hls.destroy();
+                break;
+            }
+          }
+        });
+        video.play().catch(e => {
+          console.warn("Play promise rejected", e);
+        });
+      } else {
+        errorsEl.textContent = "HLS not supported in this browser.";
+      }
+    }
 
-    if args.filter_name:
-        filtered = [c for c in channels if args.filter_name.lower() in (c["name"] or "").lower()]
-    else:
-        filtered = channels
+    // debounce helper
+    function debounce(fn, delay = 200) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+      };
+    }
 
-    if args.limit:
-        filtered = filtered[: args.limit]
+    searchInput.addEventListener("input", debounce(applyFilter, 120));
+    document.getElementById("refresh").addEventListener("click", loadPlaylist);
 
-    # Show summary
-    for idx, ch in enumerate(filtered, start=1):
-        name = ch.get("name", "<unknown>")
-        group = ch["attributes"].get("group-title", "")
-        logo = ch["attributes"].get("tvg-logo", "")
-        url = ch.get("url", "")
-        print(f"{idx}. {name} | group: {group} | logo: {logo}\n   -> {url}")
+    // initial load
+    loadPlaylist();
+  </script>
+</body>
+</html>
 
-    # Save full parsed JSON
-    save_json(channels, Path(args.out_json))
-    print(f"Full parsed JSON saved to {args.out_json}")
-
-if __name__ == "__main__":
-    main()
 
   
   
