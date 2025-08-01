@@ -442,6 +442,41 @@
   
   
   
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PH IPTV HLS Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body { margin: 0; background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    video { width: 100%; max-width: 800px; height: auto; }
+  </style>
+</head>
+<body>
+  <video id="video" controls playsinline webkit-playsinline></video>
+
+  <script>
+    const video = document.getElementById('video');
+    const streamURL = 'https://iptv-org.github.io/iptv/countries/ph.m3u';
+
+    // Check for native m3u8 support (iOS Safari etc.)
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = streamURL;
+    } else if (window.Hls && Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(streamURL);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
+    } else {
+      video.innerHTML = 'Your browser does not support HLS playback.';
+    }
+  </script>
+</body>
+</html>
 
 
 
