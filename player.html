@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PH IPTV Universal Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <link rel="stylesheet" href="/player.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar" aria-label="Channel selector">
+      <div>
+        <input id="search" class="search-input" placeholder="Search channels..." aria-label="Search channels" />
+      </div>
+      <div class="channel-list" id="channelList" aria-label="Available channels">
+        Loading channels...
+      </div>
+    </div>
+
+    <div class="player-card" aria-label="Video player">
+      <div class="title-bar">
+        <div class="channel-title" id="currentTitle">Loading...</div>
+        <div class="status" id="statusText">No stream loaded</div>
+      </div>
+      <div class="video-wrapper">
+        <video id="video" playsinline webkit-playsinline preload="metadata" poster="" crossorigin="anonymous" tabindex="0">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+      <div class="controls" aria-label="Playback controls">
+        <button class="btn" id="playPauseBtn" aria-label="Play/Pause">Play ▶️</button>
+        <div class="progress" id="progressBar" aria-label="Playback progress" role="slider" tabindex="0">
+          <div class="progress-inner" id="progressInner"></div>
+        </div>
+        <div class="time" id="timeDisplay">0:00 / 0:00</div>
+        <button class="btn" id="muteBtn" aria-label="Mute toggle">Mute 🔇</button>
+        <button class="btn" id="fsBtn" aria-label="Toggle fullscreen">⛶</button>
+      </div>
+      <div class="fallback" id="fallbackNotice" style="display:none;">
+        If a stream fails, refresh or pick another. Some streams may be offline or blocked (CORS/network).
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/player.js"></script>
+</body>
+</html>
