@@ -93,12 +93,13 @@
     .lotto-frame {
       width: 100%;
       max-width: 600px;
-      height: 250px;
+      height: 225px;
       overflow: hidden;
       position: relative;
       border-radius: 15px;
       box-shadow: 0 0 10px #aaa;
       margin: 20px auto; /* Center and add margin */
+      clip-path: inset(0 0 120px 0); /* Clip bottom part to show only top content */
     }
     .lotto-frame iframe {
       position: relative;
@@ -200,6 +201,7 @@
       }
       .lotto-frame {
         height: 220px; /* Slightly reduce height for mobile */
+        clip-path: inset(0 0 100px 0);
         transform: none !important;
       }
       .lotto-frame iframe {
@@ -230,6 +232,7 @@
       }
       .lotto-frame {
         height: 200px;
+        clip-path: inset(0 0 80px 0);
         transform: none !important;
       }
       .lotto-frame iframe {
