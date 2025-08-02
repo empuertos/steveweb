@@ -396,11 +396,12 @@
         <option value="UCVVw9u0pZ3nnWxx7WyE8YkQ">Bombo Radyo Philippines</option>
         <option value="UCetMicrNjXa_Pev2pjl-Vjw">Leo Lastimosa</option>
       </select>
-      <label for="qualitySelect">Select Quality:</label>
+      <!-- Quality selector removed for auto selection -->
+      <!-- <label for="qualitySelect">Select Quality:</label>
       <select id="qualitySelect">
         <option value="hd720">720p</option>
         <option value="hd1080">1080p</option>
-      </select>
+      </select> -->
 
       <div class="wrap" id="playerContainer" style="display: none;">
         <iframe id="livePlayer" src="./Steve&#39;s Live Page_files/saved_resource.html" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="">
@@ -498,9 +499,18 @@
     channelSelect.addEventListener("change", function () {
       const channelId = this.value;
       if (channelId) {
-        livePlayer.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1&vq=hd1080&enablejsapi=1`;
+        livePlayer.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1&enablejsapi=1`;
         playerContainer.style.display = "flex";
-        player.setPlaybackQuality(qualitySelect.value);
+        // Auto select quality based on network speed
+        testNetworkSpeed().then(speedMbps => {
+          if (player && typeof player.setPlaybackQuality === 'function') {
+            if (speedMbps > 5) {
+              player.setPlaybackQuality('hd1080');
+            } else {
+              player.setPlaybackQuality('hd720');
+            }
+          }
+        });
 
         // Request fullscreen on playerContainer when video starts playing
         function requestFullscreen(element) {
@@ -553,11 +563,39 @@
       });
     }
     function onPlayerReady(event) {
-      // Set initial quality
-      const qualitySelect = document.getElementById('qualitySelect');
-      if (qualitySelect && player && typeof player.setPlaybackQuality === 'function') {
-        player.setPlaybackQuality(qualitySelect.value);
-      }
+      // Auto select quality based on network speed
+      testNetworkSpeed().then(speedMbps => {
+        if (player && typeof player.setPlaybackQuality === 'function') {
+          if (speedMbps > 5) {
+            player.setPlaybackQuality('hd1080');
+          } else {
+            player.setPlaybackQuality('hd720');
+          }
+        }
+      });
+    }
+    
+    // Network speed test function
+    function testNetworkSpeed() {
+      return new Promise((resolve) => {
+        const image = new Image();
+        const imageSizeBytes = 500000; // Approximate size of test image in bytes (500 KB)
+        const startTime = new Date().getTime();
+        image.onload = function () {
+          const endTime = new Date().getTime();
+          const duration = (endTime - startTime) / 1000; // seconds
+          const bitsLoaded = imageSizeBytes * 8;
+          const speedBps = bitsLoaded / duration;
+          const speedMbps = speedBps / (1024 * 1024);
+          resolve(speedMbps);
+        };
+        image.onerror = function () {
+          // On error, assume slow speed
+          resolve(0);
+        };
+        // Use a small image URL for speed test (can be any reliable image)
+        image.src = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg?cache=" + new Date().getTime();
+      });
     }
     
     // Load the IFrame Player API code asynchronously.
