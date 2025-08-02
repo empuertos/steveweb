@@ -558,7 +558,8 @@
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('livePlayer', {
         events: {
-          'onReady': onPlayerReady
+          'onReady': onPlayerReady,
+          'onPlaybackQualityChange': onPlaybackQualityChange
         }
       });
     }
@@ -573,6 +574,16 @@
           }
         }
       });
+    }
+    
+    function onPlaybackQualityChange(event) {
+      const quality = event.data;
+      if (quality === 'small' || quality === 'medium' || quality === 'tiny' || quality === 'auto') {
+        // Force quality to at least 720p
+        if (player && typeof player.setPlaybackQuality === 'function') {
+          player.setPlaybackQuality('hd720');
+        }
+      }
     }
     
     // Network speed test function
