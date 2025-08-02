@@ -108,6 +108,46 @@
       border: 0;
     }
 
+    /* Swertres Results Section */
+    .swertres-results {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+    .swertres-results h3 {
+      color: #333;
+      margin-top: 0;
+      text-align: center;
+    }
+    .swertres-results table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .swertres-results th, .swertres-results td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .swertres-results th {
+      background-color: #3366cc;
+      color: white;
+    }
+    .swertres-results td:first-child {
+      font-weight: bold;
+    }
+    .swertres-results .source {
+      font-size: 0.8em;
+      color: #777;
+      text-align: right;
+      margin-top: 15px;
+    }
+
     /* YouTube Live Stream Selector */
     select {
       padding: 10px;
@@ -206,6 +246,13 @@
       select {
         width: calc(100% - 20px); /* More padding on smaller screens */
       }
+      .swertres-results {
+        padding: 15px;
+      }
+      .swertres-results th, .swertres-results td {
+        padding: 8px;
+        font-size: 0.9em;
+      }
     }
 
     @media (max-width: 480px) {
@@ -237,6 +284,13 @@
       }
       .audio-section, .movie-links {
         padding: 15px;
+      }
+      .swertres-results {
+        padding: 10px;
+      }
+      .swertres-results th, .swertres-results td {
+        padding: 6px;
+        font-size: 0.8em;
       }
     }
   </style>
@@ -273,6 +327,34 @@
         </iframe>
       </div>
     </div>
+  </div>
+
+  <!-- Swertres Results Section -->
+  <div class="swertres-results">
+    <h3>Swertres Results Today</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Draw Schedule</th>
+          <th>Swertres Results</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2:00 PM</td>
+          <td>Stand by…</td>
+        </tr>
+        <tr>
+          <td>5:00 PM</td>
+          <td>*</td>
+        </tr>
+        <tr>
+          <td>9:00 PM</td>
+          <td>*</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="source">~Source/Courtesy: PCSO Official</p>
   </div>
 
   <div class="section-container">
