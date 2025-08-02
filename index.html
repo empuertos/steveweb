@@ -89,7 +89,7 @@
       color: #555;
     }
 
-    /* Lotto frame styling */
+    /* Lotto frame styling - FIXED FOR MOBILE */
     .lotto-frame {
       width: 100%;
       max-width: 600px;
@@ -198,9 +198,15 @@
       }
       .lotto-frame {
         height: 200px; /* Slightly reduce height for mobile */
+        /* Use transform instead of top positioning for better mobile compatibility */
+        transform: scale(0.9);
+        transform-origin: top center;
       }
       .lotto-frame iframe {
         top: -1200px; /* Adjust iframe position for mobile */
+        /* Alternative approach using transform */
+        transform: scale(1.1);
+        transform-origin: top center;
       }
       select {
         width: calc(100% - 20px); /* More padding on smaller screens */
@@ -226,9 +232,13 @@
       }
       .lotto-frame {
         height: 180px;
+        transform: scale(0.8);
+        transform-origin: top center;
       }
       .lotto-frame iframe {
         top: -1150px; /* Further adjust iframe position */
+        transform: scale(1.25);
+        transform-origin: top center;
       }
       .audio-section, .movie-links {
         padding: 15px;
