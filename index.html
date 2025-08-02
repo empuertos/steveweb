@@ -482,6 +482,29 @@
       if (channelId) {
         livePlayer.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1`;
         playerContainer.style.display = "flex";
+
+        // Request fullscreen on playerContainer when video starts playing
+        function requestFullscreen(element) {
+          if (element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) { /* Firefox */
+            element.mozRequestFullScreen();
+          } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) { /* IE/Edge */
+            element.msRequestFullscreen();
+          }
+        }
+
+        // Add event listener to iframe to detect when video starts playing
+        livePlayer.addEventListener('load', () => {
+          try {
+            requestFullscreen(playerContainer);
+          } catch (e) {
+            console.warn('Fullscreen request failed:', e);
+          }
+        });
+
       } else {
         livePlayer.src = "";
         playerContainer.style.display = "none";
