@@ -91,21 +91,61 @@
 
     /* Lotto frame styling - FIXED FOR MOBILE */
     .lotto-frame {
+      background: #fff;
       width: 100%;
       max-width: 600px;
-      height: 225px;
-      overflow: hidden;
-      position: relative;
+      margin: 20px auto;
+      padding: 25px;
       border-radius: 15px;
-      box-shadow: 0 0 10px #aaa;
-      margin: 20px auto; /* Center and add margin */
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      border: 1px solid #ddd;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      box-sizing: border-box;
+    }
+    .lotto-frame table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+    }
+    .lotto-frame thead th {
+      font-weight: 700;
+      font-size: 1.1em;
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 2px solid #3366cc;
+      color: #3366cc;
+    }
+    .lotto-frame tbody tr:nth-child(odd) {
+      background: #f9f9f9;
+    }
+    .lotto-frame tbody tr:nth-child(even) {
+      background: #fff;
+    }
+    .lotto-frame tbody td {
+      padding: 12px 15px;
+    }
+    .lotto-frame tbody tr:first-child td:first-child {
+      border-radius: 10px 0 0 0;
+    }
+    .lotto-frame tbody tr:first-child td:last-child {
+      border-radius: 0 10px 0 0;
+    }
+    .lotto-frame tbody tr:last-child td:first-child {
+      border-radius: 0 0 0 10px;
+    }
+    .lotto-frame tbody tr:last-child td:last-child {
+      border-radius: 0 0 10px 0;
+    }
+    .lotto-frame .source {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 12px;
+      text-align: left;
+      font-style: italic;
     }
     .lotto-frame iframe {
-      position: relative;
-      top: -1220px; /* Adjusted to show relevant content */
-      height: 1750px;
-      width: 100%;
-      border: 0;
+      display: none;
     }
     .countdown {
       margin-top: 10px;
@@ -197,16 +237,11 @@
         margin: 10px auto;
       }
       .lotto-frame {
-        height: 200px; /* Slightly reduce height for mobile */
-        /* Use transform instead of top positioning for better mobile compatibility */
-        transform: scale(0.9);
-        transform-origin: top center;
-      }
-      .lotto-frame iframe {
-        top: -1200px; /* Adjust iframe position for mobile */
-        /* Alternative approach using transform */
-        transform: scale(1.1);
-        transform-origin: top center;
+        padding: 20px;
+        margin: 15px auto;
+        max-width: 100%;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        border-radius: 15px;
       }
       select {
         width: calc(100% - 20px); /* More padding on smaller screens */
@@ -231,14 +266,11 @@
         font-size: 1.5em;
       }
       .lotto-frame {
-        height: 180px;
-        transform: scale(0.8);
-        transform-origin: top center;
-      }
-      .lotto-frame iframe {
-        top: -1150px; /* Further adjust iframe position */
-        transform: scale(1.25);
-        transform-origin: top center;
+        padding: 15px;
+        margin: 10px auto;
+        max-width: 100%;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        border-radius: 15px;
       }
       .audio-section, .movie-links {
         padding: 15px;
@@ -270,35 +302,12 @@
   <div class="section-container">
     <div class="section-box" style="flex: 1 1 100%; max-width: 600px;">
       <h3>🎲 3D Lotto Results Today</h3>
-      <div class="lotto-frame" style="background: #ffffff; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 15px; border: 1px solid #ddd; max-width: 600px; margin: 20px auto;">
-        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin-bottom: 20px; font-weight: 700; font-size: 1.5em; border-bottom: 2px solid #3366cc; padding-bottom: 8px;">
-          🎲 3D Lotto Results Today
-        </h3>
-        <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333;">
-          <thead>
-            <tr>
-              <th style="padding: 12px 15px; text-align: left; font-weight: 700; font-size: 1.1em; border-bottom: 2px solid #3366cc;">Draw Schedule</th>
-              <th style="padding: 12px 15px; text-align: left; font-weight: 700; font-size: 1.1em; border-bottom: 2px solid #3366cc;">Swertres Results Today</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="background: #f9f9f9; border-radius: 10px;">
-              <td style="padding: 12px 15px; border-radius: 10px 0 0 10px;">2:00 PM</td>
-              <td style="padding: 12px 15px;">&nbsp;</td>
-            </tr>
-            <tr style="background: #ffffff; border-radius: 10px;">
-              <td style="padding: 12px 15px;">5:00 PM</td>
-              <td style="padding: 12px 15px;">&nbsp;</td>
-            </tr>
-            <tr style="background: #f9f9f9; border-radius: 0 0 10px 10px;">
-              <td style="padding: 12px 15px; border-radius: 0 0 10px 0;">9:00 PM</td>
-              <td style="padding: 12px 15px;">&nbsp;</td>
-            </tr>
-          </tbody>
-        </table>
-        <div style="font-size: 0.85em; color: #666; margin-top: 12px; text-align: left; font-style: italic;">
-          ~Source/Courtesy: PCSO Official
-        </div>
+      <div class="lotto-frame">
+        <iframe
+          id="lottoIframe"
+          src="https://www.lottopcso.com/swertres-result-today/"
+          scrolling="no">
+        </iframe>
       </div>
       <div class="countdown">
         ⏳ Refreshing in <span id="countdown">45</span> seconds...
