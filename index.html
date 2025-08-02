@@ -479,8 +479,8 @@
     // Initial fetch
     fetchWeather();
 
-    // Periodic fetch every 5 minutes (300000 ms)
-    setInterval(fetchWeather, 300000);
+    // Periodic fetch every 1 second (1000 ms)
+    setInterval(fetchWeather, 1000);
 
     // YouTube Live Stream Selector Script
     const channelSelect = document.getElementById("channelSelect");
@@ -495,7 +495,14 @@
         // Request fullscreen on playerContainer when video starts playing
         function requestFullscreen(element) {
           if (element.requestFullscreen) {
-            element.requestFullscreen();
+            element.requestFullscreen().then(() => {
+              // Try to lock screen orientation to landscape
+              if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch((err) => {
+                  console.warn('Orientation lock failed:', err);
+                });
+              }
+            });
           } else if (element.mozRequestFullScreen) { /* Firefox */
             element.mozRequestFullScreen();
           } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
