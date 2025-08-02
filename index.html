@@ -91,61 +91,21 @@
 
     /* Lotto frame styling - FIXED FOR MOBILE */
     .lotto-frame {
-      background: #fff;
       width: 100%;
       max-width: 600px;
-      margin: 20px auto;
-      padding: 25px;
+      height: 225px;
+      overflow: hidden;
+      position: relative;
       border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      border: 1px solid #ddd;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #333;
-      box-sizing: border-box;
-    }
-    .lotto-frame table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 12px;
-    }
-    .lotto-frame thead th {
-      font-weight: 700;
-      font-size: 1.1em;
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 2px solid #3366cc;
-      color: #3366cc;
-    }
-    .lotto-frame tbody tr:nth-child(odd) {
-      background: #f9f9f9;
-    }
-    .lotto-frame tbody tr:nth-child(even) {
-      background: #fff;
-    }
-    .lotto-frame tbody td {
-      padding: 12px 15px;
-    }
-    .lotto-frame tbody tr:first-child td:first-child {
-      border-radius: 10px 0 0 0;
-    }
-    .lotto-frame tbody tr:first-child td:last-child {
-      border-radius: 0 10px 0 0;
-    }
-    .lotto-frame tbody tr:last-child td:first-child {
-      border-radius: 0 0 0 10px;
-    }
-    .lotto-frame tbody tr:last-child td:last-child {
-      border-radius: 0 0 10px 0;
-    }
-    .lotto-frame .source {
-      font-size: 0.85em;
-      color: #666;
-      margin-top: 12px;
-      text-align: left;
-      font-style: italic;
+      box-shadow: 0 0 10px #aaa;
+      margin: 20px auto; /* Center and add margin */
     }
     .lotto-frame iframe {
-      display: none;
+      position: relative;
+      top: -1220px; /* Adjusted to show relevant content */
+      height: 1750px;
+      width: 100%;
+      border: 0;
     }
     .countdown {
       margin-top: 10px;
@@ -237,11 +197,16 @@
         margin: 10px auto;
       }
       .lotto-frame {
-        padding: 20px;
-        margin: 15px auto;
-        max-width: 100%;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-        border-radius: 15px;
+        height: 200px; /* Slightly reduce height for mobile */
+        /* Use transform instead of top positioning for better mobile compatibility */
+        transform: scale(0.9);
+        transform-origin: top center;
+      }
+      .lotto-frame iframe {
+        top: -1200px; /* Adjust iframe position for mobile */
+        /* Alternative approach using transform */
+        transform: scale(1.1);
+        transform-origin: top center;
       }
       select {
         width: calc(100% - 20px); /* More padding on smaller screens */
@@ -266,11 +231,14 @@
         font-size: 1.5em;
       }
       .lotto-frame {
-        padding: 15px;
-        margin: 10px auto;
-        max-width: 100%;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-        border-radius: 15px;
+        height: 180px;
+        transform: scale(0.8);
+        transform-origin: top center;
+      }
+      .lotto-frame iframe {
+        top: -1150px; /* Further adjust iframe position */
+        transform: scale(1.25);
+        transform-origin: top center;
       }
       .audio-section, .movie-links {
         padding: 15px;
@@ -302,12 +270,13 @@
   <div class="section-container">
     <div class="section-box" style="flex: 1 1 100%; max-width: 600px;">
       <h3>🎲 3D Lotto Results Today</h3>
-      <div class="lotto-frame">
-        <iframe
-          id="lottoIframe"
-          src="https://www.lottopcso.com/swertres-result-today/"
-          scrolling="no">
-        </iframe>
+      <div class="lotto-frame" style="padding: 20px; max-width: 400px; margin: 20px auto; background: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-family: Arial, sans-serif; color: #333; text-align: left;">
+        <div style="font-weight: bold; font-size: 1.2em; margin-bottom: 10px;">Draw Schedule</div>
+        <div style="font-weight: bold; font-size: 1.2em; margin-bottom: 15px;">Swertres Results Today</div>
+        <div style="margin-bottom: 6px;">2:00 PM</div>
+        <div style="margin-bottom: 6px;">5:00 PM</div>
+        <div style="margin-bottom: 6px;">9:00 PM</div>
+        <div style="font-size: 0.85em; color: #666; margin-top: 12px; font-style: italic;">~Source/Courtesy: PCSO Official</div>
       </div>
       <div class="countdown">
         ⏳ Refreshing in <span id="countdown">45</span> seconds...
