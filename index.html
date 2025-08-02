@@ -93,7 +93,7 @@
     .lotto-frame {
       width: 100%;
       max-width: 600px;
-      height: 225px;
+      height: 250px;
       overflow: hidden;
       position: relative;
       border-radius: 15px;
@@ -102,10 +102,12 @@
     }
     .lotto-frame iframe {
       position: relative;
-      top: -1220px; /* Adjusted to show relevant content */
-      height: 1750px;
+      top: 0; /* Remove large negative top offset */
+      height: 100%;
       width: 100%;
       border: 0;
+      overflow: hidden;
+      border-radius: 15px;
     }
     .countdown {
       margin-top: 10px;
@@ -197,16 +199,12 @@
         margin: 10px auto;
       }
       .lotto-frame {
-        height: 200px; /* Slightly reduce height for mobile */
-        /* Use transform instead of top positioning for better mobile compatibility */
-        transform: scale(0.9);
-        transform-origin: top center;
+        height: 220px; /* Slightly reduce height for mobile */
+        transform: none !important;
       }
       .lotto-frame iframe {
-        top: -1200px; /* Adjust iframe position for mobile */
-        /* Alternative approach using transform */
-        transform: scale(1.1);
-        transform-origin: top center;
+        top: 0 !important; /* Remove top offset */
+        transform: none !important;
       }
       select {
         width: calc(100% - 20px); /* More padding on smaller screens */
@@ -231,14 +229,12 @@
         font-size: 1.5em;
       }
       .lotto-frame {
-        height: 180px;
-        transform: scale(0.8);
-        transform-origin: top center;
+        height: 200px;
+        transform: none !important;
       }
       .lotto-frame iframe {
-        top: -1150px; /* Further adjust iframe position */
-        transform: scale(1.25);
-        transform-origin: top center;
+        top: 0 !important;
+        transform: none !important;
       }
       .audio-section, .movie-links {
         padding: 15px;
