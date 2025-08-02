@@ -277,15 +277,47 @@
           scrolling="no">
         </iframe>
       </div>
-      <div class="countdown">
+      <div class="countdown" style="display:none;">
         ⏳ Refreshing in <span id="countdown">45</span> seconds...
       </div>
+      <script>
+        async function fetchSwertresResults() {
+          const proxyUrl = 'https://api.allorigins.win/get?url=';
+          const targetUrl = encodeURIComponent('https://www.lottopcso.com/swertres-result-today/');
+          try {
+            const response = await fetch(proxyUrl + targetUrl);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data.contents, 'text/html');
+            // Extract the relevant data from the fetched HTML
+            // For demonstration, let's assume the draw schedule and results are in a table with class 'swertres-table'
+            const table = doc.querySelector('.swertres-table');
+            if (!table) {
+              console.error('Swertres table not found');
+              return;
+            }
+            // Extract rows and update the page
+            const rows = table.querySelectorAll('tbody tr');
+            if (rows.length >= 3) {
+              document.getElementById('time2pm').textContent = rows[0].textContent.trim();
+              document.getElementById('time5pm').textContent = rows[1].textContent.trim();
+              document.getElementById('time9pm').textContent = rows[2].textContent.trim();
+            }
+          } catch (error) {
+            console.error('Error fetching Swertres results:', error);
+          }
+        }
+        fetchSwertresResults();
+        // Refresh every 45 seconds
+        setInterval(fetchSwertresResults, 45000);
+      </script>
     </div>
   </div>
 
   <div class="section-container">
-    <h2 style="width: 100%; text-align: center; margin-bottom: 10px;">YouTube Live Channels</h2>
     <div class="section-box" style="flex: 1 1 100%; max-width: 800px;">
+      <h1>Select a YouTube Live Channel</h1>
       <select id="channelSelect">
         <option value="">-- Choose Channel --</option>
         <option value="UCnf8Ejd3y2RboWNcOqHS24A">ATTY. RUPHIL F BAÑOC</option>
