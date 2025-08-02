@@ -128,11 +128,13 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
+      table-layout: fixed; /* Ensures consistent column widths */
     }
     .swertres-results th, .swertres-results td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
+      word-wrap: break-word; /* Handles long words */
     }
     .swertres-results th {
       background-color: #3366cc;
@@ -250,8 +252,8 @@
         padding: 15px;
       }
       .swertres-results th, .swertres-results td {
-        padding: 8px;
-        font-size: 0.9em;
+        padding: 10px; /* Keep padding consistent */
+        font-size: 1em; /* Keep font size consistent */
       }
     }
 
@@ -286,11 +288,11 @@
         padding: 15px;
       }
       .swertres-results {
-        padding: 10px;
+        padding: 15px; /* Keep padding consistent */
       }
       .swertres-results th, .swertres-results td {
-        padding: 6px;
-        font-size: 0.8em;
+        padding: 10px; /* Keep padding consistent */
+        font-size: 1em; /* Keep font size consistent */
       }
     }
   </style>
