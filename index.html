@@ -452,26 +452,35 @@
     // Weather Script
     const apiKey = 'f4a8040d77bcf2fca8ddc0acd72dc4f0';
     const city = 'Cebu,PH';
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById('weather');
-        const temp = data.main.temp;
-        const condition = data.weather[0].description;
-        const humidity = data.main.humidity;
-        const wind = data.wind.speed;
-        container.innerHTML = `
-          <h2>Cebu Weather</h2>
-          <p><strong>Temp:</strong> ${temp} °C</p>
-          <p><strong>Condition:</strong> ${condition}</p>
-          <p><strong>Humidity:</strong> ${humidity}%</p>
-          <p><strong>Wind:</strong> ${wind} m/s</p>
-        `;
-      })
-      .catch(error => {
-        document.getElementById('weather').innerHTML = "<p>Weather info unavailable.</p>";
-        console.error('Error fetching weather:', error);
-      });
+
+    function fetchWeather() {
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('weather');
+          const temp = data.main.temp;
+          const condition = data.weather[0].description;
+          const humidity = data.main.humidity;
+          const wind = data.wind.speed;
+          container.innerHTML = `
+            <h2>Cebu Weather</h2>
+            <p><strong>Temp:</strong> ${temp} °C</p>
+            <p><strong>Condition:</strong> ${condition}</p>
+            <p><strong>Humidity:</strong> ${humidity}%</p>
+            <p><strong>Wind:</strong> ${wind} m/s</p>
+          `;
+        })
+        .catch(error => {
+          document.getElementById('weather').innerHTML = "<p>Weather info unavailable.</p>";
+          console.error('Error fetching weather:', error);
+        });
+    }
+
+    // Initial fetch
+    fetchWeather();
+
+    // Periodic fetch every 5 minutes (300000 ms)
+    setInterval(fetchWeather, 300000);
 
     // YouTube Live Stream Selector Script
     const channelSelect = document.getElementById("channelSelect");
