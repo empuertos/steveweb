@@ -362,6 +362,7 @@
     margin-top: 0px;
     height: 0px;
 ">Select a YouTube Live Channel</h1>
+      <label for="channelSelect">Select Channel:</label>
       <select id="channelSelect">
         <option value="">-- Choose Channel --</option>
         <option value="UCnf8Ejd3y2RboWNcOqHS24A">ATTY. RUPHIL F BAÑOC</option>
@@ -394,6 +395,11 @@
         <option value="UCkw9o4FxDfJJiEHpq5JzDrQ">DYTR Bohol TV</option>
         <option value="UCVVw9u0pZ3nnWxx7WyE8YkQ">Bombo Radyo Philippines</option>
         <option value="UCetMicrNjXa_Pev2pjl-Vjw">Leo Lastimosa</option>
+      </select>
+      <label for="qualitySelect">Select Quality:</label>
+      <select id="qualitySelect">
+        <option value="hd720">720p</option>
+        <option value="hd1080">1080p</option>
       </select>
 
       <div class="wrap" id="playerContainer" style="display: none;">
@@ -492,8 +498,9 @@
     channelSelect.addEventListener("change", function () {
       const channelId = this.value;
       if (channelId) {
-        livePlayer.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1`;
+        livePlayer.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1&vq=hd1080&enablejsapi=1`;
         playerContainer.style.display = "flex";
+        player.setPlaybackQuality(qualitySelect.value);
 
         // Request fullscreen on playerContainer when video starts playing
         function requestFullscreen(element) {
@@ -523,12 +530,41 @@
             console.warn('Fullscreen request failed:', e);
           }
         });
+        
+        qualitySelect.addEventListener('change', () => {
+          if (player && typeof player.setPlaybackQuality === 'function') {
+            player.setPlaybackQuality(qualitySelect.value);
+          }
+        });
 
       } else {
         livePlayer.src = "";
         playerContainer.style.display = "none";
       }
     });
+    
+    // Load YouTube IFrame Player API
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('livePlayer', {
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
+    function onPlayerReady(event) {
+      // Set initial quality
+      const qualitySelect = document.getElementById('qualitySelect');
+      if (qualitySelect && player && typeof player.setPlaybackQuality === 'function') {
+        player.setPlaybackQuality(qualitySelect.value);
+      }
+    }
+    
+    // Load the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   </script>
 
 
