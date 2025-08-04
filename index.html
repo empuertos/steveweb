@@ -9,23 +9,27 @@
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f2f6ff;
-      color: #222;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
       text-align: center;
       line-height: 1.6;
     }
     header {
-      background-color: #3366cc;
+      background: rgba(0, 0, 0, 0.7);
       color: white;
-      padding: 15px 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    h1, h2, h3 {
-      color: #333;
-      margin-top: 20px;
+      padding: 20px 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
     }
     h1 {
-      color: white;
+      color: #64b5f6;
+      text-shadow: 0 0 10px rgba(100, 181, 246, 0.7);
+      margin: 0;
+      font-size: 2.2rem;
+    }
+    h2, h3 {
+      color: #bbdefb;
+      margin-top: 20px;
     }
 
     /* General container for sections */
@@ -36,57 +40,59 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px; /* Space between items */
+      gap: 20px;
     }
 
     /* Individual section styling */
     .section-box {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      flex: 1 1 calc(50% - 40px); /* Two columns on desktop, with gap */
-      min-width: 300px; /* Minimum width before wrapping */
-      box-sizing: border-box; /* Include padding and border in the element's total width and height */
-      margin-bottom: 20px; /* Space below each box */
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex: 1 1 calc(50% - 40px);
+      min-width: 300px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
     }
 
     /* Specific styles for date-time and weather */
     #date-time-container, .weather-container {
-      position: static; /* Remove absolute positioning for responsiveness */
+      position: static;
       text-align: center;
-      background: #3366cc; /* Consistent background for clock */
+      background: rgba(0, 0, 0, 0.5);
       color: #FFFFFF;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      margin: 10px auto; /* Center and add margin */
-      max-width: 300px; /* Limit width */
-    }
-    #date-time-container {
-      background: #3366cc;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(100, 181, 246, 0.5);
+      margin: 10px auto;
+      max-width: 300px;
     }
     #date {
-      font-size: 1.2em;
+      font-size: 1.3em;
+      color: #64b5f6;
     }
     #ph-time {
-      font-size: 2em;
-      margin-top: 5px;
+      font-size: 2.2em;
+      margin-top: 10px;
+      color: #bbdefb;
+      text-shadow: 0 0 8px rgba(187, 222, 251, 0.7);
     }
 
     .weather-container {
-      background: #f0f8ff;
-      color: #333;
+      background: rgba(0, 0, 0, 0.5);
+      color: #bbdefb;
       max-width: 300px;
     }
     .weather-container h2 {
-      color: #333;
+      color: #64b5f6;
       margin-top: 0;
     }
     .weather-container p {
-      margin: 4px 0;
-      font-size: 0.95em;
-      color: #555;
+      margin: 6px 0;
+      font-size: 1em;
+      color: #e3f2fd;
     }
 
     /* Lotto frame styling */
@@ -97,33 +103,36 @@
       overflow: hidden;
       position: relative;
       border-radius: 15px;
-      box-shadow: 0 0 10px #aaa;
-      margin: 20px auto; /* Center and add margin */
+      box-shadow: 0 0 15px rgba(100, 181, 246, 0.5);
+      margin: 20px auto;
+      background: rgba(0, 0, 0, 0.3);
     }
     .lotto-frame iframe {
       position: relative;
-      top: -1220px; /* Adjusted to show relevant content */
+      top: -1220px;
       height: 1750px;
       width: 100%;
       border: 0;
     }
     .countdown {
-      margin-top: 10px;
-      font-size: 0.9em;
-      color: #555;
+      margin-top: 15px;
+      font-size: 1em;
+      color: #bbdefb;
     }
 
     /* YouTube Live Stream Selector */
     select {
-      padding: 10px;
+      padding: 12px;
       font-size: 16px;
-      width: calc(100% - 40px); /* Adjust for padding */
+      width: calc(100% - 40px);
       max-width: 480px;
       margin: 20px auto;
       display: block;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background-color: white;
+      border: 2px solid #64b5f6;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #e3f2fd;
+      box-shadow: 0 0 10px rgba(100, 181, 246, 0.5);
     }
     .wrap {
       width: 100%;
@@ -134,23 +143,28 @@
       align-items: center;
       justify-content: center;
       margin: 20px auto;
-      max-width: 800px; /* Max width for video player */
+      max-width: 800px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(100, 181, 246, 0.7);
     }
     iframe {
       width: 100%;
       height: 100%;
       border: none;
       display: block;
+      border-radius: 15px;
     }
 
     /* Audio section */
     .audio-section {
       margin: 40px auto;
       max-width: 600px;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
     }
     audio {
       width: 100%;
@@ -161,49 +175,56 @@
     .movie-links {
       margin: 40px auto;
       max-width: 600px;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       text-align: left;
     }
     .movie-links h2 {
       text-align: center;
-      color: #333;
+      color: #64b5f6;
     }
     .movie-links ul {
       list-style: none;
       padding: 0;
     }
     .movie-links li {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .movie-links a {
-      color: #3366cc;
+      color: #64b5f6;
       text-decoration: none;
       font-weight: bold;
+      transition: color 0.3s ease;
     }
     .movie-links a:hover {
+      color: #bbdefb;
       text-decoration: underline;
     }
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .section-box {
-        flex: 1 1 100%; /* Single column on smaller screens */
+        flex: 1 1 100%;
         max-width: 100%;
       }
       #date-time-container, .weather-container {
         margin: 10px auto;
       }
       .lotto-frame {
-        height: 200px; /* Slightly reduce height for mobile */
+        height: 200px;
       }
       .lotto-frame iframe {
-        top: -1200px; /* Adjust iframe position for mobile */
+        top: -1200px;
       }
       select {
-        width: calc(100% - 20px); /* More padding on smaller screens */
+        width: calc(100% - 20px);
+      }
+      h1 {
+        font-size: 1.8rem;
       }
     }
 
@@ -211,26 +232,32 @@
       body {
         padding: 10px;
       }
+      header {
+        padding: 15px 10px;
+      }
       header h1 {
-        font-size: 1.5em;
+        font-size: 1.6em;
       }
       h1, h2, h3 {
-        font-size: 1.2em;
+        font-size: 1.3em;
       }
       #date-time-container, .weather-container {
         font-size: 0.9em;
-        padding: 10px;
+        padding: 15px;
       }
       #ph-time {
-        font-size: 1.5em;
+        font-size: 1.8em;
       }
       .lotto-frame {
         height: 180px;
       }
       .lotto-frame iframe {
-        top: -1150px; /* Further adjust iframe position */
+        top: -1150px;
       }
       .audio-section, .movie-links {
+        padding: 20px;
+      }
+      .section-box {
         padding: 15px;
       }
     }
