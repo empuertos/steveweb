@@ -355,6 +355,28 @@
     </div>
   </div>
 
+
+ <!-- Live Sheet Data Card -->
+  <div class="card" aria-label="Live spreadsheet data">
+    <div style="display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:8px;">
+      <div>
+        <h1>Live Sheet Data</h1>
+        <div class="small">Automatically refreshed every 30 seconds.</div>
+      </div>
+      <div>
+        <button class="refresh" id="manualRefresh">Refresh now</button>
+        <span id="status" class="small"></span>
+      </div>
+    </div>
+    <div id="tableContainer" aria-live="polite">
+      <div class="loading" id="loadingText">Loading data…</div>
+    </div>
+    <div class="timestamp" id="lastUpdated"></div>
+    <div id="errorMsg" class="error" style="display:none;"></div>
+  </div>
+  
+  
+  
   <!-- YouTube Selector -->
   <div class="section-container">
     <div class="section-box" style="flex: 1 1 100%; max-width: 800px;">
@@ -401,6 +423,10 @@
       Your browser does not support the audio element.
     </audio>
   </div>
+  
+  
+  
+  
 
   <!-- Movie Links -->
   <div class="movie-links">
@@ -427,24 +453,7 @@
     <p>F05158511X24317591X41352780X53072337X66958056</p>
   </div>
 
-  <!-- Live Sheet Data Card -->
-  <div class="card" aria-label="Live spreadsheet data">
-    <div style="display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:8px;">
-      <div>
-        <h1>Live Sheet Data</h1>
-        <div class="small">Automatically refreshed every 30 seconds.</div>
-      </div>
-      <div>
-        <button class="refresh" id="manualRefresh">Refresh now</button>
-        <span id="status" class="small"></span>
-      </div>
-    </div>
-    <div id="tableContainer" aria-live="polite">
-      <div class="loading" id="loadingText">Loading data…</div>
-    </div>
-    <div class="timestamp" id="lastUpdated"></div>
-    <div id="errorMsg" class="error" style="display:none;"></div>
-  </div>
+ 
 
   <!-- Copyright -->
   <div class="copyright">
@@ -601,3 +610,4 @@
 
 </body>
 </html>
+
