@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Steve's Live Page</title>
+  <title>Steve's Live Page with Live Sheet</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
+    /* --- Existing Steve's page styles --- */
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
@@ -32,7 +33,6 @@
       margin-top: 20px;
     }
 
-    /* General container for sections */
     .section-container {
       padding: 20px;
       margin: 0 auto;
@@ -43,7 +43,6 @@
       gap: 20px;
     }
 
-    /* Individual section styling */
     .section-box {
       background: rgba(255, 255, 255, 0.1);
       padding: 20px;
@@ -57,7 +56,6 @@
       margin-bottom: 20px;
     }
 
-    /* Specific styles for date-time and weather */
     #date-time-container, .weather-container {
       position: static;
       text-align: center;
@@ -95,32 +93,6 @@
       color: #e3f2fd;
     }
 
-    /* Lotto frame styling */
-    .lotto-frame {
-      width: 100%;
-      max-width: 600px;
-      height: 225px;
-      overflow: hidden;
-      position: relative;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(100, 181, 246, 0.5);
-      margin: 20px auto;
-      background: rgba(0, 0, 0, 0.3);
-    }
-    .lotto-frame iframe {
-      position: relative;
-      top: -1220px;
-      height: 1750px;
-      width: 100%;
-      border: 0;
-    }
-    .countdown {
-      margin-top: 15px;
-      font-size: 1em;
-      color: #bbdefb;
-    }
-
-    /* YouTube Live Stream Selector */
     select {
       padding: 12px;
       font-size: 16px;
@@ -155,7 +127,6 @@
       border-radius: 15px;
     }
 
-    /* Audio section */
     .audio-section {
       margin: 40px auto;
       max-width: 600px;
@@ -171,7 +142,6 @@
       margin-top: 15px;
     }
 
-    /* Movie Links */
     .movie-links {
       margin: 40px auto;
       max-width: 600px;
@@ -205,7 +175,6 @@
       text-decoration: underline;
     }
 
-    /* Security codes */
     .security-codes {
       margin: 40px auto;
       max-width: 800px;
@@ -225,7 +194,6 @@
       word-break: break-all;
     }
 
-    /* Copyright */
     .copyright {
       text-align: center;
       padding: 20px;
@@ -234,7 +202,6 @@
       margin-top: 20px;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .section-box {
         flex: 1 1 100%;
@@ -242,12 +209,6 @@
       }
       #date-time-container, .weather-container {
         margin: 10px auto;
-      }
-      .lotto-frame {
-        height: 200px;
-      }
-      .lotto-frame iframe {
-        top: -1200px;
       }
       select {
         width: calc(100% - 20px);
@@ -277,17 +238,97 @@
       #ph-time {
         font-size: 1.8em;
       }
-      .lotto-frame {
-        height: 180px;
-      }
-      .lotto-frame iframe {
-        top: -1150px;
-      }
       .audio-section, .movie-links {
         padding: 20px;
       }
       .section-box {
         padding: 15px;
+      }
+    }
+
+    /* --- Live Sheet Data styles --- */
+    .live-sheet-body {
+      background: #0f111a;
+    }
+    .card {
+      background: #1f2435;
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 24px 60px -10px rgba(0,0,0,.25);
+      max-width: 1100px;
+      width: 100%;
+      overflow: auto;
+      margin: 40px auto;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    }
+    .card h1 {
+      margin: 0 0 .5rem;
+      font-size: 1.5rem;
+      color: #e6ecff;
+      text-shadow: none;
+    }
+    .small {
+      font-size: .7rem;
+      opacity: .75;
+      color: #c3cde0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: .5rem;
+      color: #e6ecff;
+    }
+    thead tr {
+      background: #2f3045;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #272a48;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      font-weight: 600;
+    }
+    tr:nth-child(odd) {
+      background: rgba(255,255,255,.02);
+    }
+    .error {
+      background: #7a1f1f;
+      padding: .75rem 1rem;
+      border-radius: .5rem;
+      color: #ffe3e3;
+      margin-top: .5rem;
+    }
+    .loading {
+      display: inline-block;
+      font-size: .9rem;
+      margin-left: .5rem;
+      vertical-align: middle;
+      color: #c3cde0;
+    }
+    .refresh {
+      background: #6366f1;
+      border: none;
+      color: white;
+      padding: .45rem .9rem;
+      border-radius: .5rem;
+      cursor: pointer;
+      font-size: .8rem;
+      margin-left: .5rem;
+    }
+    .timestamp {
+      margin-top: .5rem;
+      font-size: .65rem;
+      opacity: .8;
+      color: #c3cde0;
+    }
+    @media (max-width: 900px) {
+      .card {
+        padding: 1rem;
       }
     }
   </style>
@@ -298,6 +339,7 @@
     <h1>Welcome to Steve's Website</h1>
   </header>
 
+  <!-- Date & Weather -->
   <div class="section-container">
     <div class="section-box">
       <div id="date-time-container">
@@ -313,22 +355,7 @@
     </div>
   </div>
 
-  <div class="section-container">
-    <div class="section-box" style="flex: 1 1 100%; max-width: 600px;">
-      <h3>🎲 3D Lotto Results Today</h3>
-
-  <div class="lotto-frame">
-    <iframe 
-      id="lottoIframe"
-      src="https://www.lottopcso.com/swertres-result-today/" 
-      scrolling="no">
-    </iframe>
-  </div>
-
-  <div class="countdown">
-    ⏳ Refreshing in <span id="countdown">10</span> seconds...
-  </div>
-
+  <!-- YouTube Selector -->
   <div class="section-container">
     <div class="section-box" style="flex: 1 1 100%; max-width: 800px;">
       <h1>Select a YouTube Live Channel</h1>
@@ -345,16 +372,6 @@
         <option value="UCpOm2kv1upnIFoOT7rSp6hg">PCSO GOV</option>
         <option value="UCupvZG-5ko_eiXAupbDfxWw">CNN</option>
         <option value="UCDgW7mEUuVJuU-yRyZslrbw">ALL TV2</option>
-        <option value="UC46YJ9p0d6MSUXRZFRZrwGQ">RTVMalacanang</option>
-        <option value="UC3XaG-7UVi2vD8ZZEMNnnpw">UNTV News and Rescue</option>
-        <option value="UCGEbMwiX774cseKvJqF9R2g">News5 Everywhere</option>
-        <option value="UCdnZdQxYXnbN4uWJg96oGxw">Rappler</option>
-        <option value="UCvRAX-ujvZ0eTMLGG2vki9w">INQUIRER.net</option>
-        <option value="UC5664f6TkaeHgwBly50DWZQ">Manila Bulletin</option>
-        <option value="UCsAueyuPjaPGcSfR3bIBPUg">Philstar News</option>
-        <option value="UCvi6hEzLM-Z_unKPSuuzKvg">ANC 24/7</option>
-        <option value="UCFZNDbxnZluWkXbK9IP_69w">CDN Digital</option>
-        <option value="UCrs5I6O7SzINZ0pumvhvMTQ">SunStar Web TV</option>
         <option value="UC7941bBpZFenu_58hHnBkGQ">CCTN 47 OFFICIAL</option>
         <option value="UCeY0bbntWzzVIaj2z3QigXg">NBC News</option>
         <option value="UCYFgnkDYr-G5L_iy6DZdvSA">Super Radyo DZBB 594khz</option>
@@ -376,6 +393,7 @@
     </div>
   </div>
 
+  <!-- Audio -->
   <div class="audio-section">
     <h2>DYHP612 Audio Streaming Live Cebu Philippines</h2>
     <audio controls autoplay loop>
@@ -384,6 +402,7 @@
     </audio>
   </div>
 
+  <!-- Movie Links -->
   <div class="movie-links">
     <h2>🎬 Movie Links</h2>
     <ul>
@@ -398,24 +417,43 @@
       <li><a href="https://fmoviesz.ms" target="_blank">https://fmoviesz.ms</a></li>
       <li><a href="https://nunflix.org" target="_blank">https://nunflix.org</a></li>
       <li><a href="https://putlocker.pe/home" target="_blank">https://putlocker.pe/home</a></li>
-    
-      
     </ul>
   </div>
 
+  <!-- Security Codes -->
   <div class="security-codes">
     <p>G1stX51677413X79268557X43426425X02903887X48405090X97592951X36751671</p>
     <p>G2ndX87930868X79693801X28198839X10787943X01642065X43405314X05831064X58539749X93700422X50207461</p>
     <p>F05158511X24317591X41352780X53072337X66958056</p>
   </div>
 
+  <!-- Live Sheet Data Card -->
+  <div class="card" aria-label="Live spreadsheet data">
+    <div style="display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:8px;">
+      <div>
+        <h1>Live Sheet Data</h1>
+        <div class="small">Automatically refreshed every 30 seconds.</div>
+      </div>
+      <div>
+        <button class="refresh" id="manualRefresh">Refresh now</button>
+        <span id="status" class="small"></span>
+      </div>
+    </div>
+    <div id="tableContainer" aria-live="polite">
+      <div class="loading" id="loadingText">Loading data…</div>
+    </div>
+    <div class="timestamp" id="lastUpdated"></div>
+    <div id="errorMsg" class="error" style="display:none;"></div>
+  </div>
+
+  <!-- Copyright -->
   <div class="copyright">
     Copyright © 2025<br>
     All Rights Reserved
   </div>
 
   <script>
-    // Date and Time Script
+    // === Date and Time Script ===
     function updateDateTime() {
       const now = new Date();
       const dateOptions = {
@@ -439,7 +477,7 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // Weather Script
+    // === Weather Script ===
     const apiKey = 'f4a8040d77bcf2fca8ddc0acd72dc4f0';
     const city = 'Cebu,PH';
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
@@ -463,22 +501,7 @@
         console.error('Error fetching weather:', error);
       });
 
-    // Lotto Countdown Script
-    const countdownElement = document.getElementById('countdown');
-    const lottoIframe = document.getElementById('lottoIframe');
-    let secondsLeft = 45;
-    function updateCountdown() {
-      secondsLeft--;
-      countdownElement.textContent = secondsLeft;
-      if (secondsLeft <= 0) {
-        const cleanSrc = lottoIframe.src.split('?')[0];
-        lottoIframe.src = cleanSrc + '?t=' + new Date().getTime();
-        secondsLeft = 45;
-      }
-    }
-    setInterval(updateCountdown, 1000);
-
-    // YouTube Live Stream Selector Script
+    // === YouTube Live Stream Selector Script ===
     const channelSelect = document.getElementById("channelSelect");
     const playerContainer = document.getElementById("playerContainer");
     const livePlayer = document.getElementById("livePlayer");
@@ -492,22 +515,89 @@
         playerContainer.style.display = "none";
       }
     });
+
+    // === Live Sheet Data Script ===
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQYsjd9JYHYMW-UQipV00EObQWZyER01Cj0LCOwwkq1TFlg0lBjmTmZVUFDXPvyb-y2zqXW2pzskL-5/pub?output=csv&gid=0";
+
+    const tableContainer = document.getElementById("tableContainer");
+    const errorMsg = document.getElementById("errorMsg");
+    const lastUpdated = document.getElementById("lastUpdated");
+    const status = document.getElementById("status");
+    const loadingText = document.getElementById("loadingText");
+    const manualRefresh = document.getElementById("manualRefresh");
+
+    function parseCSV(text) {
+      const rows = text.trim().split("\n").map(r => {
+        return r.split(",").map(c => c.replace(/^"|"$/g, ""));
+      });
+      return rows;
+    }
+
+    function buildTable(data) {
+      if (!data || data.length === 0) {
+        tableContainer.innerHTML = "<div class='small'>No data available.</div>";
+        return;
+      }
+      const thead = data[0];
+      const bodyRows = data.slice(1);
+
+      const table = document.createElement("table");
+      const trHead = document.createElement("tr");
+      thead.forEach(h => {
+        const th = document.createElement("th");
+        th.textContent = h;
+        trHead.appendChild(th);
+      });
+      const theadEl = document.createElement("thead");
+      theadEl.appendChild(trHead);
+      table.appendChild(theadEl);
+
+      const tbody = document.createElement("tbody");
+      bodyRows.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(cell => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+
+      tableContainer.innerHTML = "";
+      tableContainer.appendChild(table);
+    }
+
+    async function fetchAndRender() {
+      status.textContent = "Fetching…";
+      errorMsg.style.display = "none";
+      loadingText.style.display = "inline-block";
+      try {
+        const resp = await fetch(CSV_URL, { cache: "no-cache" });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const text = await resp.text();
+        const parsed = parseCSV(text);
+        buildTable(parsed);
+        const now = new Date();
+        lastUpdated.textContent = "Last updated: " + now.toLocaleString("en-US", { hour12: true });
+        status.textContent = "";
+      } catch (err) {
+        errorMsg.textContent = "Failed to load spreadsheet: " + err.message;
+        errorMsg.style.display = "block";
+        status.textContent = "Error";
+      } finally {
+        loadingText.style.display = "none";
+      }
+    }
+
+    manualRefresh.addEventListener("click", () => {
+      fetchAndRender();
+    });
+
+    // initial load and periodic refresh every 30s
+    fetchAndRender();
+    setInterval(fetchAndRender, 30000);
   </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
