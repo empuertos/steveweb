@@ -373,6 +373,40 @@
     <div class="timestamp" id="lastUpdated"></div>
     <div id="errorMsg" class="error" style="display:none;"></div>
   </div>
+  
+    <script>    
+// === CONFIGURE THIS: your published CSV URL ===    
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQYsjd9JYHYMW-UQipV00EObQWZyER01Cj0LCOwwkq1TFlg0lBjmTmZVUFDXPvyb-y2zqXW2pzskL-5/pub?output=csv&gid=0";    
+// ============================================
+    const tableContainer = document.getElementById("tableContainer");    
+const errorMsg = document.getElementById("errorMsg");    
+const lastUpdated = document.getElementById("lastUpdated");    
+const status = document.getElementById("status");    
+const loadingText = document.getElementById("loadingText");    
+const manualRefresh = document.getElementById("manualRefresh");
+    let refreshIntervalId = null;
+    function parseCSV(text) {      
+const rows = text.trim().split("\n").map(r => {        
+// naive CSV split; for more robust parsing you could integrate a small parser        
+return r.split(",").map(c => c.replace(/^"|"$/g, ""));      
+});      
+return rows;    
+}
+    function buildTable(data) {      
+if (!data || data.length === 0) {        
+tableContainer.innerHTML = "<div class='small'>No data available.</div>";        
+return;      
+}      
+const thead = data[0];      
+const bodyRows = data.slice(1);
+      const table = document.createElement("table");      
+const trHead = document.createElement("tr");      
+thead.forEach(h => {        
+const th = document.createElement("th");        
+th.textContent = h;        
+trHead.appendChild(th);      
+});
+  </script>
 
   <!-- YouTube Selector -->
   <div class="section-container">
@@ -444,5 +478,3 @@
     <p>G1stX51677413X79268557X43426425X02903887X48405090X97592951X36751671
 	G2ndX87930868X79693801X28198839X10787943X01642065X43405314X05831064X58539749X93700422X50207461
 	F05158511X24317591X41352780X53072337X66958056</p>
-   
-
