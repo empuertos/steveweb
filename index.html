@@ -354,7 +354,7 @@
       </div>
     </div>
   </div>
-
+  
   <!-- Live Sheet Data Card -->
   <div class="card" aria-label="Live spreadsheet data">
     <div style="display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:8px;">
@@ -373,40 +373,7 @@
     <div class="timestamp" id="lastUpdated"></div>
     <div id="errorMsg" class="error" style="display:none;"></div>
   </div>
-  
-    <script>    
-// === CONFIGURE THIS: your published CSV URL ===    
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQYsjd9JYHYMW-UQipV00EObQWZyER01Cj0LCOwwkq1TFlg0lBjmTmZVUFDXPvyb-y2zqXW2pzskL-5/pub?output=csv&gid=0";    
-// ============================================
-    const tableContainer = document.getElementById("tableContainer");    
-const errorMsg = document.getElementById("errorMsg");    
-const lastUpdated = document.getElementById("lastUpdated");    
-const status = document.getElementById("status");    
-const loadingText = document.getElementById("loadingText");    
-const manualRefresh = document.getElementById("manualRefresh");
-    let refreshIntervalId = null;
-    function parseCSV(text) {      
-const rows = text.trim().split("\n").map(r => {        
-// naive CSV split; for more robust parsing you could integrate a small parser        
-return r.split(",").map(c => c.replace(/^"|"$/g, ""));      
-});      
-return rows;    
-}
-    function buildTable(data) {      
-if (!data || data.length === 0) {        
-tableContainer.innerHTML = "<div class='small'>No data available.</div>";        
-return;      
-}      
-const thead = data[0];      
-const bodyRows = data.slice(1);
-      const table = document.createElement("table");      
-const trHead = document.createElement("tr");      
-thead.forEach(h => {        
-const th = document.createElement("th");        
-th.textContent = h;        
-trHead.appendChild(th);      
-});
-  </script>
+
 
   <!-- YouTube Selector -->
   <div class="section-container">
@@ -475,6 +442,164 @@ trHead.appendChild(th);
 
   <!-- Security Codes -->
   <div class="security-codes">
-    <p>G1stX51677413X79268557X43426425X02903887X48405090X97592951X36751671
-	G2ndX87930868X79693801X28198839X10787943X01642065X43405314X05831064X58539749X93700422X50207461
-	F05158511X24317591X41352780X53072337X66958056</p>
+    <p>G1stX51677413X79268557X43426425X02903887X48405090X97592951X36751671</p>
+    <p>G2ndX87930868X79693801X28198839X10787943X01642065X43405314X05831064X58539749X93700422X50207461</p>
+    <p>F05158511X24317591X41352780X53072337X66958056</p>
+  </div>
+
+  
+  <!-- Copyright -->
+  <div class="copyright">
+    Copyright © 2025<br>
+    All Rights Reserved
+  </div>
+
+  <script>
+    // === Date and Time Script ===
+    function updateDateTime() {
+      const now = new Date();
+      const dateOptions = {
+        timeZone: 'Asia/Manila',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      const timeOptions = {
+        timeZone: 'Asia/Manila',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      };
+      document.getElementById('date').textContent =
+        new Intl.DateTimeFormat('en-US', dateOptions).format(now);
+      document.getElementById('ph-time').textContent =
+        new Intl.DateTimeFormat('en-US', timeOptions).format(now);
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // === Weather Script ===
+    const apiKey = 'f4a8040d77bcf2fca8ddc0acd72dc4f0';
+    const city = 'Cebu,PH';
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('weather');
+        const temp = data.main.temp;
+        const condition = data.weather[0].description;
+        const humidity = data.main.humidity;
+        const wind = data.wind.speed;
+        container.innerHTML = `
+          <h2>Cebu Weather</h2>
+          <p><strong>Temp:</strong> ${temp} °C</p>
+          <p><strong>Condition:</strong> ${condition}</p>
+          <p><strong>Humidity:</strong> ${humidity}%</p>
+          <p><strong>Wind:</strong> ${wind} m/s</p>
+        `;
+      })
+      .catch(error => {
+        document.getElementById('weather').innerHTML = "<p>Weather info unavailable.</p>";
+        console.error('Error fetching weather:', error);
+      });
+
+    // === YouTube Live Stream Selector Script ===
+    const channelSelect = document.getElementById("channelSelect");
+    const playerContainer = document.getElementById("playerContainer");
+    const livePlayer = document.getElementById("livePlayer");
+    channelSelect.addEventListener("change", function () {
+      const channelId = this.value;
+      if (channelId) {
+        livePlayer.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1`;
+        playerContainer.style.display = "flex";
+      } else {
+        livePlayer.src = "";
+        playerContainer.style.display = "none";
+      }
+    });
+
+    // === Live Sheet Data Script ===
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQYsjd9JYHYMW-UQipV00EObQWZyER01Cj0LCOwwkq1TFlg0lBjmTmZVUFDXPvyb-y2zqXW2pzskL-5/pub?output=csv&gid=0";
+
+    const tableContainer = document.getElementById("tableContainer");
+    const errorMsg = document.getElementById("errorMsg");
+    const lastUpdated = document.getElementById("lastUpdated");
+    const status = document.getElementById("status");
+    const loadingText = document.getElementById("loadingText");
+    const manualRefresh = document.getElementById("manualRefresh");
+
+    function parseCSV(text) {
+      const rows = text.trim().split("\n").map(r => {
+        return r.split(",").map(c => c.replace(/^"|"$/g, ""));
+      });
+      return rows;
+    }
+
+    function buildTable(data) {
+      if (!data || data.length === 0) {
+        tableContainer.innerHTML = "<div class='small'>No data available.</div>";
+        return;
+      }
+      const thead = data[0];
+      const bodyRows = data.slice(1);
+
+      const table = document.createElement("table");
+      const trHead = document.createElement("tr");
+      thead.forEach(h => {
+        const th = document.createElement("th");
+        th.textContent = h;
+        trHead.appendChild(th);
+      });
+      const theadEl = document.createElement("thead");
+      theadEl.appendChild(trHead);
+      table.appendChild(theadEl);
+
+      const tbody = document.createElement("tbody");
+      bodyRows.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(cell => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+
+      tableContainer.innerHTML = "";
+      tableContainer.appendChild(table);
+    }
+
+    async function fetchAndRender() {
+      status.textContent = "Fetching…";
+      errorMsg.style.display = "none";
+      loadingText.style.display = "inline-block";
+      try {
+        const resp = await fetch(CSV_URL, { cache: "no-cache" });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const text = await resp.text();
+        const parsed = parseCSV(text);
+        buildTable(parsed);
+        const now = new Date();
+        lastUpdated.textContent = "Last updated: " + now.toLocaleString("en-US", { hour12: true });
+        status.textContent = "";
+      } catch (err) {
+        errorMsg.textContent = "Failed to load spreadsheet: " + err.message;
+        errorMsg.style.display = "block";
+        status.textContent = "Error";
+      } finally {
+        loadingText.style.display = "none";
+      }
+    }
+
+    manualRefresh.addEventListener("click", () => {
+      fetchAndRender();
+    });
+
+    // initial load and periodic refresh every 30s
+    fetchAndRender();
+    setInterval(fetchAndRender, 30000);
+  </script>
+
+</body>
+</html>
