@@ -324,229 +324,185 @@
   <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Philippines Weather & Alerts</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      margin: 0;
-      padding: 20px;
-    }
-    h1, h2 {
-      text-align: center;
-      color: #00d2ff;
-    }
-    .weather-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-    .weather-box {
-      background: #1e1e2f;
-      padding: 20px;
-      border-radius: 12px;
-      width: 280px;
-    }
-    .alert {
-      background: #ff5555;
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px auto;
-      max-width: 600px;
-      text-align: center;
-    }
-    #ticker {
-      position: relative;
-      background: #333;
-      color: #fff;
-      padding: 10px;
-      overflow: hidden;
-      white-space: nowrap;
-      margin-top: 20px;
-    }
-    #ticker span {
-      display: inline-block;
-      padding-right: 100%;
-      animation: scroll 30s linear infinite;
-    }
-    @keyframes scroll {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-    .mute-btn {
-      margin-top: 10px;
-      padding: 5px 10px;
-      background: #ff4444;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Philippines Vertical Weather Map</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+#map-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    height: 100vh;
+}
+.city {
+    position: absolute;
+    width: 90%;
+    left: 5%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    background-color: rgba(51,51,51,0.9);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+.marker {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    top: -10px;
+    left: -10px;
+    border: 2px solid #fff;
+    z-index: 0;
+}
+.city img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    z-index: 2;
+    position: relative;
+}
+.city-info {
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    position: relative;
+}
+.city-name { font-weight: bold; color: #ffd700; }
+.temp { color: #67e8f9; }
+.condition { color: #ccc; font-size: 0.9em; }
+.overlay { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+.drop {
+    position: absolute;
+    width: 2px; height: 10px;
+    background: #67e8f9; opacity: 0.6;
+    animation: fall 1s linear infinite;
+}
+@keyframes fall { 0%{transform:translateY(-10px);}100%{transform:translateY(100%);} }
+.cloud {
+    position: absolute; width: 60px; height: 30px;
+    background: rgba(200,200,200,0.3);
+    border-radius: 50%;
+    animation: cloudMove 6s linear infinite;
+}
+@keyframes cloudMove { 0%{left:-70px;}100%{left:100%;} }
+.sun-ray {
+    position: absolute; width:6px; height:20px;
+    background: #ffd700; opacity:0.7;
+    top:5px; left:50%; transform-origin: bottom center;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 0%{transform:rotate(0deg) translateX(-50%)} 100%{transform:rotate(360deg) translateX(-50%)} }
+</style>
 </head>
 <body>
-
-<h1>🌦️ Philippines Weather</h1>
-<div id="time" style="text-align:center; font-size: 1.2em;"></div>
-
-<div class="weather-container" id="weather">
-  <!-- Weather boxes will be injected here -->
-</div>
-
-<div id="alerts">
-  <!-- Earthquake and Tsunami Alerts Here -->
-</div>
-
-<div id="ticker">
-  <span id="advisory-ticker">📢 Loading advisories...</span>
-</div>
-
-<audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
-
+<div id="map-container"></div>
 <script>
-const apiKey = 'f4a8040d77bcf2fca8ddc0acd72dc4f0';
+const apiKey = "2bfa044af082bab4c373f17dc0b530da";
 const cities = [
-  { name: "Manila", lat: 14.5995, lon: 120.9842 },
-  { name: "Cebu City", lat: 10.3157, lon: 123.8854 },
-  { name: "Talisay, Cebu", lat: 10.2451, lon: 123.8494 },
-  { name: "Davao", lat: 7.1907, lon: 125.4553 }
+    { name: "Manila", query: "Manila,PH", top: "5%", color:"#ff4d4d" },
+    { name: "Talisay City Cebu", query: "Talisay,Cebu,PH", top: "18%", color:"#4dffff" },
+    { name: "Cebu City", query: "Cebu City,PH", top: "31%", color:"#4dff4d" },
+    { name: "Cagayan de Oro", query: "Cagayan de Oro,PH", top: "44%", color:"#ffff4d" },
+    { name: "Zamboanga", query: "Zamboanga,PH", top: "57%", color:"#ff4dff" },
+    { name: "Davao City", query: "Davao City,PH", top: "70%", color:"#ffb84d" }
 ];
 
-const weatherContainer = document.getElementById("weather");
-const alertSound = document.getElementById("alertSound");
-let soundInterval, soundTimeout;
-
-function fetchWeather() {
-  weatherContainer.innerHTML = "";
-  cities.forEach(city => {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=${apiKey}&units=metric`)
-      .then(res => res.json())
-      .then(data => {
-        const temp = data.main.temp.toFixed(1);
-        const humidity = data.main.humidity;
-        const feels_like = data.main.feels_like.toFixed(1);
-        const description = data.weather[0].main;
-        const isRaining = description.toLowerCase().includes("rain") ? "Yes ☔" : "No";
-        const heatIndex = calculateHeatIndex(temp, humidity).toFixed(1);
-
-        const box = document.createElement("div");
-        box.className = "weather-box";
-        box.innerHTML = `
-          <h2>${city.name}</h2>
-          🌡️ Temp: ${temp}°C<br/>
-          🥵 Feels Like: ${feels_like}°C<br/>
-          🔥 Heat Index: ${heatIndex}°C<br/>
-          💧 Humidity: ${humidity}%<br/>
-          🌧️ Raining: ${isRaining}<br/>
-          ⏰ ${new Date().toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true })}
-        `;
-        weatherContainer.appendChild(box);
-      });
-  });
+function createRain(cityDiv, count=20){
+    const overlay = document.createElement('div'); overlay.className='overlay';
+    for(let i=0;i<count;i++){
+        const drop=document.createElement('div');
+        drop.className='drop';
+        drop.style.left=Math.random()*100+'%';
+        drop.style.animationDelay=Math.random()+'s';
+        overlay.appendChild(drop);
+    }
+    cityDiv.appendChild(overlay);
 }
 
-function calculateHeatIndex(T, RH) {
-  // Simplified formula
-  return T + 0.33 * RH / 100 * T - 0.7;
+function createClouds(cityDiv,count=3){
+    const overlay=document.createElement('div'); overlay.className='overlay';
+    for(let i=0;i<count;i++){
+        const cloud=document.createElement('div');
+        cloud.className='cloud';
+        cloud.style.top=Math.random()*20+'px';
+        cloud.style.animationDuration=(4+Math.random()*4)+'s';
+        overlay.appendChild(cloud);
+    }
+    cityDiv.appendChild(overlay);
 }
 
-function fetchEarthquakes() {
-  fetch("https://earthquake.phivolcs.dost.gov.ph/api/latest")
-    .then(res => res.json())
-    .then(data => {
-      const alertDiv = document.getElementById("alerts");
-      const quake = data[0]; // Assume latest
-      const magnitude = parseFloat(quake.magnitude);
-      alertDiv.innerHTML = "";
-      if (magnitude >= 5) {
-        alertDiv.innerHTML = `
-          <div class="alert">
-            ⚠️ <strong>Earthquake Alert:</strong><br/>
-            Magnitude ${magnitude} in ${quake.location}<br/>
-            <span id="countdown">15</span>s remaining
-            <button class="mute-btn" onclick="stopSound()">Mute</button>
-          </div>
-        `;
-        playSound();
-      }
-    })
-    .catch(err => console.warn("Earthquake data not available."));
+function createSunRays(cityDiv,count=8){
+    const overlay=document.createElement('div'); overlay.className='overlay';
+    for(let i=0;i<count;i++){
+        const ray=document.createElement('div');
+        ray.className='sun-ray';
+        ray.style.transform=`rotate(${i*45}deg) translateX(-50%)`;
+        overlay.appendChild(ray);
+    }
+    cityDiv.appendChild(overlay);
 }
 
-function fetchTsunami() {
-  // Example placeholder: simulate tsunami alert
-  const tsunamiActive = false; // Set to true to test
-  const alertDiv = document.getElementById("alerts");
-  if (tsunamiActive) {
-    alertDiv.innerHTML += `
-      <div class="alert" style="background: #0066cc;">
-        🌊 <strong>Tsunami Warning!</strong><br/>
-        Stay away from coastal areas.
-        <span id="countdown">15</span>s remaining
-        <button class="mute-btn" onclick="stopSound()">Mute</button>
-      </div>
-    `;
-    playSound();
-  }
+async function fetchWeather(){
+    const container=document.getElementById("map-container");
+    container.innerHTML="";
+    for(let city of cities){
+        const cityDiv=document.createElement('div');
+        cityDiv.className='city'; cityDiv.style.top=city.top;
+        const marker=document.createElement('div');
+        marker.className='marker'; marker.style.backgroundColor=city.color;
+        cityDiv.appendChild(marker);
+
+        try{
+            const url=`https://api.openweathermap.org/data/2.5/weather?q=${city.query}&appid=${apiKey}&units=metric`;
+            const res=await fetch(url);
+            const data=await res.json();
+            const weatherMain=data.weather[0].main.toLowerCase();
+
+            cityDiv.innerHTML+=`
+                <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="weather icon">
+                <div class="city-info">
+                    <div class="city-name">${city.name}</div>
+                    <div class="temp">${data.main.temp.toFixed(1)}°C</div>
+                    <div class="condition"></div>
+                </div>
+            `;
+
+            let conditionText="";
+            if(weatherMain.includes("rain")){ conditionText="Raining"; createRain(cityDiv,25); }
+            else if(weatherMain.includes("cloud")){ conditionText="Cloudy"; createClouds(cityDiv,3); }
+            else if(weatherMain.includes("clear")){ conditionText="Sunny"; createSunRays(cityDiv,8); }
+            else{ conditionText=data.weather[0].description; }
+
+            cityDiv.querySelector('.condition').textContent=conditionText;
+
+        } catch(error){
+            cityDiv.innerHTML+=`
+                <div class="city-info">
+                    <div class="city-name">${city.name}</div>
+                    <div class="condition">Data unavailable</div>
+                </div>
+            `;
+        }
+
+        container.appendChild(cityDiv);
+    }
 }
 
-function playSound() {
-  stopSound(); // Reset
-  let secondsLeft = 15;
-  document.getElementById("countdown").textContent = secondsLeft;
-  soundInterval = setInterval(() => {
-    alertSound.play();
-    secondsLeft--;
-    document.getElementById("countdown").textContent = secondsLeft;
-  }, 1000);
-  soundTimeout = setTimeout(stopSound, 15000);
-}
-
-function stopSound() {
-  clearInterval(soundInterval);
-  clearTimeout(soundTimeout);
-  alertSound.pause();
-  alertSound.currentTime = 0;
-  const alertBox = document.getElementById("alerts");
-  if (alertBox) alertBox.innerHTML = "";
-}
-
-function updateTime() {
-  document.getElementById("time").textContent =
-    `🕒 Local Time: ${new Date().toLocaleString('en-PH', { hour12: true })}`;
-}
-
-function loadTicker() {
-  const now = Date.now();
-  const advisories = [
-    { type: "heat", message: "🔥 Stay hydrated! Heat index is high.", time: now },
-    { type: "flood", message: "🌊 Watch out for flood-prone areas during heavy rain.", time: now },
-    { type: "emergency", message: "☎️ Emergency: Call 911 for urgent help.", time: now }
-  ];
-  const active = advisories.filter(a => now - a.time < 86400000); // last 24 hours
-
-  const ticker = active.map(a => a.message).join(" — ");
-  document.getElementById("advisory-ticker").textContent = ticker;
-}
-
-// Initial + every 30s
+// Initial fetch and repeat every 10 seconds
 fetchWeather();
-fetchEarthquakes();
-fetchTsunami();
-loadTicker();
-updateTime();
-setInterval(() => {
-  fetchWeather();
-  fetchEarthquakes();
-  fetchTsunami();
-  updateTime();
-}, 30000);
+setInterval(fetchWeather,10000);
 </script>
-
 </body>
 </html>
 
