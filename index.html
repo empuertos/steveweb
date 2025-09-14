@@ -383,6 +383,96 @@
       </div>
     </section>
 
+    <!-- PHIVOLCS Latest Earthquakes -->
+    <section class="card animate-fade-in">
+      <h2 class="card-title" style="color: var(--accent-color); text-align: center;">PHIVOLCS Latest Earthquakes</h2>
+      <table style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse; background: var(--secondary-bg); box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <thead>
+          <tr>
+            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Time</th>
+            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Magnitude</th>
+            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Location</th>
+          </tr>
+        </thead>
+        <tbody id="quake-table-body" style="border: 1px solid #ddd; text-align: center;">
+          <tr><td colspan="3" style="text-align:center;">Loading data...</td></tr>
+        </tbody>
+      </table>
+      <div id="last-updated" style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #555;"></div>
+      <script>
+        const workerUrl = 'https://phivolcs-worker.22afed28-f0b2-46d0-8804-c90e25c90bd4.workers.dev/';
+
+        // Sample data for local testing
+        const sampleEarthquakes = [
+          { dateTime: '14 September 2025 - 12:49 PM', magnitude: '2.0', location: '020 km N 11° W of Cortes (Surigao Del Sur)' },
+          { dateTime: '14 September 2025 - 12:06 PM', magnitude: '2.5', location: '027 km N 15° W of Burgos (Surigao Del Norte)' },
+          { dateTime: '14 September 2025 - 11:55 AM', magnitude: '2.6', location: '018 km S 07° W of Sabtang (Batanes)' },
+          { dateTime: '14 September 2025 - 10:59 AM', magnitude: '1.7', location: '029 km S 83° W of Claveria (Masbate)' },
+          { dateTime: '14 September 2025 - 10:01 AM', magnitude: '3.7', location: '089 km N 51° E of Burgos (Surigao Del Norte)' },
+          { dateTime: '14 September 2025 - 09:56 AM', magnitude: '1.8', location: '012 km S 56° W of PiÑan (Zamboanga Del Norte)' },
+          { dateTime: '14 September 2025 - 09:10 AM', magnitude: '2.2', location: '007 km N 41° E of Santa Maria (Davao Occidental)' },
+          { dateTime: '14 September 2025 - 08:43 AM', magnitude: '3.3', location: '027 km S 56° W of Dalupiri Island (Calayan) (Cagayan)' },
+          { dateTime: '14 September 2025 - 07:56 AM', magnitude: '2.0', location: '011 km N 32° E of City Of Bayugan (Agusan Del Sur)' },
+          { dateTime: '14 September 2025 - 07:25 AM', magnitude: '1.2', location: '013 km N 58° W of Calatagan (Batangas)' }
+        ];
+
+        async function fetchEarthquakeData() {
+          try {
+            const response = await fetch(workerUrl);
+            const data = await response.json();
+            const tbody = document.getElementById('quake-table-body');
+            tbody.innerHTML = '';
+
+            if (data.earthquakes && data.earthquakes.length > 0) {
+              data.earthquakes.forEach(eq => {
+                const tr = document.createElement('tr');
+                const timeTd = document.createElement('td');
+                timeTd.textContent = eq.dateTime;
+                const magTd = document.createElement('td');
+                magTd.textContent = eq.magnitude;
+                const locTd = document.createElement('td');
+                locTd.textContent = eq.location;
+                tr.appendChild(timeTd);
+                tr.appendChild(magTd);
+                tr.appendChild(locTd);
+                tbody.appendChild(tr);
+              });
+              document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+            } else {
+              // Fallback to sample data
+              loadSampleData();
+            }
+          } catch (error) {
+            console.error('Error fetching earthquake data:', error);
+            // Fallback to sample data
+            loadSampleData();
+          }
+        }
+
+        function loadSampleData() {
+          const tbody = document.getElementById('quake-table-body');
+          tbody.innerHTML = '';
+          sampleEarthquakes.forEach(eq => {
+            const tr = document.createElement('tr');
+            const timeTd = document.createElement('td');
+            timeTd.textContent = eq.dateTime;
+            const magTd = document.createElement('td');
+            magTd.textContent = eq.magnitude;
+            const locTd = document.createElement('td');
+            locTd.textContent = eq.location;
+            tr.appendChild(timeTd);
+            tr.appendChild(magTd);
+            tr.appendChild(locTd);
+            tbody.appendChild(tr);
+          });
+          document.getElementById('last-updated').textContent = 'Last updated: Sample data loaded';
+        }
+
+        fetchEarthquakeData();
+        setInterval(fetchEarthquakeData, 5000);
+      </script>
+    </section>
+
     <!-- Weather Dashboard -->
     <section class="card animate-fade-in">
       <div class="card-header">
@@ -915,4 +1005,3 @@
   </script>
 </body>
 </html>
-
