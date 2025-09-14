@@ -368,8 +368,6 @@
       .responsive-table {
         display: block;
         width: 100% !important;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
         border: none !important;
         box-shadow: none !important;
       }
@@ -390,22 +388,17 @@
         border-bottom: 2px solid var(--border-color);
       }
       .responsive-table td {
+        display: block;
         border: none;
         border-bottom: 1px solid var(--border-color);
-        position: relative;
-        padding-left: 50%;
+        padding: 0.5rem;
         text-align: left;
+        word-wrap: break-word;
       }
       .responsive-table td:before {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 45%;
-        padding-left: 0.5rem;
-        white-space: nowrap;
+        content: attr(data-label) ": ";
         font-weight: 600;
         color: var(--accent-color);
-        content: attr(data-label);
       }
     }
   </style>
@@ -529,7 +522,7 @@
         }
 
         fetchEarthquakeData();
-        setInterval(fetchEarthquakeData, 5000);
+        setInterval(fetchEarthquakeData, 1000);
       </script>
     </section>
 
