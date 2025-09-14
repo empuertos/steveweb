@@ -362,6 +362,52 @@
       outline: 2px solid var(--accent-color);
       outline-offset: 2px;
     }
+
+    /* Responsive adjustments for PHIVOLCS Latest Earthquakes table */
+    @media (max-width: 768px) {
+      .responsive-table {
+        display: block;
+        width: 100% !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .responsive-table thead,
+      .responsive-table tbody,
+      .responsive-table th,
+      .responsive-table td,
+      .responsive-table tr {
+        display: block;
+      }
+      .responsive-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+      .responsive-table tr {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+      }
+      .responsive-table td {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+      }
+      .responsive-table td:before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 45%;
+        padding-left: 0.5rem;
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--accent-color);
+        content: attr(data-label);
+      }
+    }
   </style>
 </head>
 <body>
@@ -383,10 +429,21 @@
       </div>
     </section>
 
+    <!-- Weather Dashboard -->
+    <section class="card animate-fade-in">
+      <div class="card-header">
+        <h2 class="card-title">Philippines Weather Dashboard</h2>
+        <p class="card-subtitle">Real-time weather across major cities</p>
+      </div>
+      <div id="weatherContainer" class="grid grid-2">
+        <div class="loading" id="weatherLoading">Loading weather data...</div>
+      </div>
+    </section>
+
     <!-- PHIVOLCS Latest Earthquakes -->
     <section class="card animate-fade-in">
       <h2 class="card-title" style="color: var(--accent-color); text-align: center;">PHIVOLCS Latest Earthquakes</h2>
-      <table style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse; background: var(--secondary-bg); box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      <table class="responsive-table" style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse; background: var(--secondary-bg); box-shadow: 0 0 10px rgba(0,0,0,0.1);">
         <thead>
           <tr>
             <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Time</th>
@@ -427,10 +484,13 @@
               data.earthquakes.forEach(eq => {
                 const tr = document.createElement('tr');
                 const timeTd = document.createElement('td');
+                timeTd.setAttribute('data-label', 'Time');
                 timeTd.textContent = eq.dateTime;
                 const magTd = document.createElement('td');
+                magTd.setAttribute('data-label', 'Magnitude');
                 magTd.textContent = eq.magnitude;
                 const locTd = document.createElement('td');
+                locTd.setAttribute('data-label', 'Location');
                 locTd.textContent = eq.location;
                 tr.appendChild(timeTd);
                 tr.appendChild(magTd);
@@ -471,17 +531,6 @@
         fetchEarthquakeData();
         setInterval(fetchEarthquakeData, 5000);
       </script>
-    </section>
-
-    <!-- Weather Dashboard -->
-    <section class="card animate-fade-in">
-      <div class="card-header">
-        <h2 class="card-title">Philippines Weather Dashboard</h2>
-        <p class="card-subtitle">Real-time weather across major cities</p>
-      </div>
-      <div id="weatherContainer" class="grid grid-2">
-        <div class="loading" id="weatherLoading">Loading weather data...</div>
-      </div>
     </section>
 
 <!DOCTYPE html>
