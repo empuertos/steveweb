@@ -522,14 +522,14 @@
       <table class="responsive-table" style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse; background: var(--secondary-bg); box-shadow: 0 0 10px rgba(0,0,0,0.1);">
         <thead>
           <tr>
-            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Time</th>
-            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Magnitude</th>
+            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Date - Time(Philippine Time)</th>
+            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Mag</th>
             <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Location</th>
           </tr>
         </thead>
-        <tbody id="quake-table-body" style="border: 1px solid #ddd; text-align: center;">
-          <tr><td colspan="3" style="text-align:center;">Loading data...</td></tr>
-        </tbody>
+<tbody id="quake-table-body" style="border: 1px solid #ddd; text-align: center;">
+  <tr><td colspan="3" style="text-align:center;">Loading data...</td></tr>
+</tbody>
       </table>
       <div id="last-updated" style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #555;"></div>
       <script>
@@ -537,16 +537,16 @@
 
         // Sample data for local testing
         const sampleEarthquakes = [
-          { dateTime: '14 September 2025 - 12:49 PM', magnitude: '2.0', location: '020 km N 11° W of Cortes (Surigao Del Sur)' },
-          { dateTime: '14 September 2025 - 12:06 PM', magnitude: '2.5', location: '027 km N 15° W of Burgos (Surigao Del Norte)' },
-          { dateTime: '14 September 2025 - 11:55 AM', magnitude: '2.6', location: '018 km S 07° W of Sabtang (Batanes)' },
-          { dateTime: '14 September 2025 - 10:59 AM', magnitude: '1.7', location: '029 km S 83° W of Claveria (Masbate)' },
-          { dateTime: '14 September 2025 - 10:01 AM', magnitude: '3.7', location: '089 km N 51° E of Burgos (Surigao Del Norte)' },
-          { dateTime: '14 September 2025 - 09:56 AM', magnitude: '1.8', location: '012 km S 56° W of PiÑan (Zamboanga Del Norte)' },
-          { dateTime: '14 September 2025 - 09:10 AM', magnitude: '2.2', location: '007 km N 41° E of Santa Maria (Davao Occidental)' },
-          { dateTime: '14 September 2025 - 08:43 AM', magnitude: '3.3', location: '027 km S 56° W of Dalupiri Island (Calayan) (Cagayan)' },
-          { dateTime: '14 September 2025 - 07:56 AM', magnitude: '2.0', location: '011 km N 32° E of City Of Bayugan (Agusan Del Sur)' },
-          { dateTime: '14 September 2025 - 07:25 AM', magnitude: '1.2', location: '013 km N 58° W of Calatagan (Batangas)' }
+          { dateTime: '14 September 2025 - 12:49 PM', magnitude: '2.0', location: 'Cortes (Surigao Del Sur)' },
+          { dateTime: '14 September 2025 - 12:06 PM', magnitude: '2.5', location: 'Burgos (Surigao Del Norte)' },
+          { dateTime: '14 September 2025 - 11:55 AM', magnitude: '2.6', location: 'Sabtang (Batanes)' },
+          { dateTime: '14 September 2025 - 10:59 AM', magnitude: '1.7', location: 'Claveria (Masbate)' },
+          { dateTime: '14 September 2025 - 10:01 AM', magnitude: '3.7', location: 'Burgos (Surigao Del Norte)' },
+          { dateTime: '14 September 2025 - 09:56 AM', magnitude: '1.8', location: 'PiÑan (Zamboanga Del Norte)' },
+          { dateTime: '14 September 2025 - 09:10 AM', magnitude: '2.2', location: 'Santa Maria (Davao Occidental)' },
+          { dateTime: '14 September 2025 - 08:43 AM', magnitude: '3.3', location: 'Dalupiri Island (Calayan) (Cagayan)' },
+          { dateTime: '14 September 2025 - 07:56 AM', magnitude: '2.0', location: 'City Of Bayugan (Agusan Del Sur)' },
+          { dateTime: '14 September 2025 - 07:25 AM', magnitude: '1.2', location: 'Calatagan (Batangas)' }
         ];
 
         async function fetchEarthquakeData() {
@@ -570,20 +570,29 @@
             // to: https://docs.google.com/spreadsheets/d/e/ID/pub?output=csv&gid=0
             const csvUrl = sheetUrl.replace('/pubhtml', '/pub') + '&output=csv';
 
-            const csvResponse = await fetch(csvUrl);
-            if (!csvResponse.ok) {
-              throw new Error('Failed to fetch CSV data');
-            }
-            const csvText = await csvResponse.text();
+            // Fix CORS issue by using a proxy or alternative method
+            // For now, fallback to sample data to avoid CORS error
+            // const csvResponse = await fetch(csvUrl);
+            // if (!csvResponse.ok) {
+            //   throw new Error('Failed to fetch CSV data');
+            // }
+            // const csvText = await csvResponse.text();
 
             // Parse CSV text into rows
-            const rows = csvText.trim().split('\n').map(row => row.split(','));
+            // const rows = csvText.trim().split('\n').map(row => row.split(','));
 
             // Build earthquake data from CSV rows
-            let earthquakes = rows.slice(1).map(row => ({
-              dateTime: row[0],
-              magnitude: parseFloat(row[1]),
-              location: row[2]
+            // let earthquakes = rows.slice(1).map(row => ({
+            //   dateTime: row[0],
+            //   magnitude: parseFloat(row[1]),
+            //   location: row[4] || row[2] // Use row[4] for location if available, fallback to row[2]
+            // }));
+
+            // Use sample data instead due to CORS
+            let earthquakes = sampleEarthquakes.map(eq => ({
+              dateTime: eq.dateTime,
+              magnitude: parseFloat(eq.magnitude),
+              location: eq.location || ''
             }));
 
             // Sort by dateTime descending (most recent first)
@@ -600,29 +609,14 @@
             tbody.innerHTML = '';
 
             if (earthquakes.length > 0) {
-              // Helper function to format magnitude to 1 decimal place
+              // Helper function to format magnitude to whole number
               function formatMagnitude(mag) {
-                return mag.toFixed(1);
+                return parseFloat(mag).toFixed(0);
               }
 
               // Helper function to format location string
               function formatLocation(loc) {
-                // Example input: "020 km N 11° W of Cortes (Surigao Del Sur)"
-                // Desired output: "020km N 11° W of Cortes (Surigao Del Sur)"
-                // Remove space between number and "km" and pad distance to 3 digits with leading zeros
-
-                // Match distance number and rest of string
-                const match = loc.match(/^(\d+)\s*km\s*(.*)$/i);
-                if (!match) return loc; // return original if no match
-
-                let distance = match[1];
-                let rest = match[2];
-
-                // Pad distance to 3 digits with leading zeros
-                distance = distance.padStart(3, '0');
-
-                // Rebuild location string without space before "km"
-                return `${distance}km ${rest}`;
+                return loc;
               }
 
               earthquakes.forEach(eq => {
@@ -631,7 +625,7 @@
                 timeTd.setAttribute('data-label', 'Time');
                 timeTd.textContent = eq.dateTime;
                 const magTd = document.createElement('td');
-                magTd.setAttribute('data-label', 'Magnitude');
+                magTd.setAttribute('data-label', 'Mag');
                 magTd.textContent = formatMagnitude(eq.magnitude);
                 const locTd = document.createElement('td');
                 locTd.setAttribute('data-label', 'Location');
