@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -550,23 +551,91 @@
 
         async function fetchEarthquakeData() {
           try {
+            // Fetch the HTML content from the worker URL
             const response = await fetch(workerUrl);
-            const data = await response.json();
+            const htmlText = await response.text();
+
+            // Parse the HTML to extract the iframe src URL
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+            const iframe = doc.querySelector('iframe');
+            if (!iframe) {
+              throw new Error('No iframe found in worker response');
+            }
+            const sheetUrl = iframe.src;
+
+            // Fetch the Google Sheets published CSV export URL
+            // Convert the iframe URL to CSV export URL
+            // Example: https://docs.google.com/spreadsheets/d/e/ID/pubhtml?gid=0&single=true&widget=true&headers=false
+            // to: https://docs.google.com/spreadsheets/d/e/ID/pub?output=csv&gid=0
+            const csvUrl = sheetUrl.replace('/pubhtml', '/pub') + '&output=csv';
+
+            const csvResponse = await fetch(csvUrl);
+            if (!csvResponse.ok) {
+              throw new Error('Failed to fetch CSV data');
+            }
+            const csvText = await csvResponse.text();
+
+            // Parse CSV text into rows
+            const rows = csvText.trim().split('\n').map(row => row.split(','));
+
+            // Build earthquake data from CSV rows
+            let earthquakes = rows.slice(1).map(row => ({
+              dateTime: row[0],
+              magnitude: parseFloat(row[1]),
+              location: row[2]
+            }));
+
+            // Sort by dateTime descending (most recent first)
+            earthquakes.sort((a, b) => {
+              const dateA = new Date(a.dateTime.replace(' - ', ' '));
+              const dateB = new Date(b.dateTime.replace(' - ', ' '));
+              return dateB - dateA;
+            });
+
+            // Filter to top 10
+            earthquakes = earthquakes.slice(0, 10);
+
             const tbody = document.getElementById('quake-table-body');
             tbody.innerHTML = '';
 
-            if (data.earthquakes && data.earthquakes.length > 0) {
-              data.earthquakes.forEach(eq => {
+            if (earthquakes.length > 0) {
+              // Helper function to format magnitude to 1 decimal place
+              function formatMagnitude(mag) {
+                return mag.toFixed(1);
+              }
+
+              // Helper function to format location string
+              function formatLocation(loc) {
+                // Example input: "020 km N 11° W of Cortes (Surigao Del Sur)"
+                // Desired output: "020km N 11° W of Cortes (Surigao Del Sur)"
+                // Remove space between number and "km" and pad distance to 3 digits with leading zeros
+
+                // Match distance number and rest of string
+                const match = loc.match(/^(\d+)\s*km\s*(.*)$/i);
+                if (!match) return loc; // return original if no match
+
+                let distance = match[1];
+                let rest = match[2];
+
+                // Pad distance to 3 digits with leading zeros
+                distance = distance.padStart(3, '0');
+
+                // Rebuild location string without space before "km"
+                return `${distance}km ${rest}`;
+              }
+
+              earthquakes.forEach(eq => {
                 const tr = document.createElement('tr');
                 const timeTd = document.createElement('td');
                 timeTd.setAttribute('data-label', 'Time');
                 timeTd.textContent = eq.dateTime;
                 const magTd = document.createElement('td');
                 magTd.setAttribute('data-label', 'Magnitude');
-                magTd.textContent = eq.magnitude;
+                magTd.textContent = formatMagnitude(eq.magnitude);
                 const locTd = document.createElement('td');
                 locTd.setAttribute('data-label', 'Location');
-                locTd.textContent = eq.location;
+                locTd.textContent = formatLocation(eq.location);
                 tr.appendChild(timeTd);
                 tr.appendChild(magTd);
                 tr.appendChild(locTd);
@@ -574,13 +643,14 @@
               });
               document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
             } else {
-              // Fallback to sample data
-              loadSampleData();
+              tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No earthquake data available</td></tr>';
+              document.getElementById('last-updated').textContent = '';
             }
           } catch (error) {
             console.error('Error fetching earthquake data:', error);
-            // Fallback to sample data
-            loadSampleData();
+            const tbody = document.getElementById('quake-table-body');
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: red;">Error loading earthquake data: ' + error.message + '</td></tr>';
+            document.getElementById('last-updated').textContent = '';
           }
         }
 
@@ -604,7 +674,7 @@
         }
 
         fetchEarthquakeData();
-        setInterval(fetchEarthquakeData, 1000);
+        setInterval(fetchEarthquakeData, 30000);
       </script>
     </section>
 
