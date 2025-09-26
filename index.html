@@ -517,157 +517,62 @@
     <!-- PHIVOLCS Latest Earthquakes -->
     <section class="card animate-fade-in">
       <h2 class="card-title" style="color: var(--accent-color); text-align: center;">PHIVOLCS Latest Earthquakes</h2>
-      <table class="responsive-table" style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse; background: var(--secondary-bg); box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      <table style="border-collapse: collapse; width: 600px; border: 1px solid #444; font-family: Arial, sans-serif; font-size: 14px; background-color: #1e1e1e; color: #fff;">
         <thead>
-          <tr>
-            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Date - Time(Philippine Time)</th>
-            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Mag</th>
-            <th style="padding: 0.75rem 1rem; border: 1px solid #ddd; text-align: center; background-color: #0077cc; color: white;">Location</th>
+          <tr style="background-color: #2d2d2d;">
+            <th style="border: 1px solid #444; padding: 8px; text-align: left; color: #fff;">Date-Time (Philippine Time)</th>
+            <th style="border: 1px solid #444; padding: 8px; text-align: left; color: #fff;">Magnitude</th>
+            <th style="border: 1px solid #444; padding: 8px; text-align: left; color: #fff;">Location</th>
           </tr>
         </thead>
-<tbody id="quake-table-body" style="border: 1px solid #ddd; text-align: center;">
-  <tr><td colspan="3" style="text-align:center;">Loading data...</td></tr>
-</tbody>
+        <tbody>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 06:14 PM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">2.2</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">011 km S 47° E of Manukan (Zamboanga Del Norte)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 05:29 PM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">1.7</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">014 km N 18° E of Paluan (Occidental Mindoro)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 04:48 PM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">2</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">018 km S 17° E of General Luna (Surigao Del Norte)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 02:27 PM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">3.1</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">006 km S 89° W of Calatagan (Batangas)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 01:56 PM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">3.2</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">007 km S 84° W of Datu Blah T. Sinsuat (Maguindanao Del Norte)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 01:32 PM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">3.5</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">032 km S 87° E of Doña Remedios Trinidad (Bulacan)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 11:45 AM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">2.6</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">006 km S 54° W of Kiblawan (Davao Del Sur)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 11:41 AM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">2.8</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">009 km N 03° E of Prieto Diaz (Sorsogon)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 09:31 AM</td>
+            <td style="border: 1px solid #444; padding: 8px; color: #fff;">2.3</td>
+            <td style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">059 km S 77° E of Jose Abad Santos (Davao Occidental)</td>
+          </tr>
+        </tbody>
       </table>
-      <div id="last-updated" style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #555;"></div>
-      <script>
-        const workerUrl = 'https://phivolcs-worker.22afed28-f0b2-46d0-8804-c90e25c90bd4.workers.dev/';
-
-        // Sample data for local testing
-        const sampleEarthquakes = [
-          { dateTime: '14 September 2025 - 12:49 PM', magnitude: '2.0', location: 'Cortes (Surigao Del Sur)' },
-          { dateTime: '14 September 2025 - 12:06 PM', magnitude: '2.5', location: 'Burgos (Surigao Del Norte)' },
-          { dateTime: '14 September 2025 - 11:55 AM', magnitude: '2.6', location: 'Sabtang (Batanes)' },
-          { dateTime: '14 September 2025 - 10:59 AM', magnitude: '1.7', location: 'Claveria (Masbate)' },
-          { dateTime: '14 September 2025 - 10:01 AM', magnitude: '3.7', location: 'Burgos (Surigao Del Norte)' },
-          { dateTime: '14 September 2025 - 09:56 AM', magnitude: '1.8', location: 'PiÑan (Zamboanga Del Norte)' },
-          { dateTime: '14 September 2025 - 09:10 AM', magnitude: '2.2', location: 'Santa Maria (Davao Occidental)' },
-          { dateTime: '14 September 2025 - 08:43 AM', magnitude: '3.3', location: 'Dalupiri Island (Calayan) (Cagayan)' },
-          { dateTime: '14 September 2025 - 07:56 AM', magnitude: '2.0', location: 'City Of Bayugan (Agusan Del Sur)' },
-          { dateTime: '14 September 2025 - 07:25 AM', magnitude: '1.2', location: 'Calatagan (Batangas)' }
-        ];
-
-        async function fetchEarthquakeData() {
-          try {
-            // Fetch the HTML content from the worker URL
-            const response = await fetch(workerUrl);
-            const htmlText = await response.text();
-
-            // Parse the HTML to extract the iframe src URL
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, 'text/html');
-            const iframe = doc.querySelector('iframe');
-            if (!iframe) {
-              throw new Error('No iframe found in worker response');
-            }
-            const sheetUrl = iframe.src;
-
-            // Fetch the Google Sheets published CSV export URL
-            // Convert the iframe URL to CSV export URL
-            // Example: https://docs.google.com/spreadsheets/d/e/ID/pubhtml?gid=0&single=true&widget=true&headers=false
-            // to: https://docs.google.com/spreadsheets/d/e/ID/pub?output=csv&gid=0
-            const csvUrl = sheetUrl.replace('/pubhtml', '/pub') + '&output=csv';
-
-            // Fix CORS issue by using a proxy or alternative method
-            // For now, fallback to sample data to avoid CORS error
-            // const csvResponse = await fetch(csvUrl);
-            // if (!csvResponse.ok) {
-            //   throw new Error('Failed to fetch CSV data');
-            // }
-            // const csvText = await csvResponse.text();
-
-            // Parse CSV text into rows
-            // const rows = csvText.trim().split('\n').map(row => row.split(','));
-
-            // Build earthquake data from CSV rows
-            // let earthquakes = rows.slice(1).map(row => ({
-            //   dateTime: row[0],
-            //   magnitude: parseFloat(row[1]),
-            //   location: row[4] || row[2] // Use row[4] for location if available, fallback to row[2]
-            // }));
-
-            // Use sample data instead due to CORS
-            let earthquakes = sampleEarthquakes.map(eq => ({
-              dateTime: eq.dateTime,
-              magnitude: parseFloat(eq.magnitude),
-              location: eq.location || ''
-            }));
-
-            // Sort by dateTime descending (most recent first)
-            earthquakes.sort((a, b) => {
-              const dateA = new Date(a.dateTime.replace(' - ', ' '));
-              const dateB = new Date(b.dateTime.replace(' - ', ' '));
-              return dateB - dateA;
-            });
-
-            // Filter to top 10
-            earthquakes = earthquakes.slice(0, 10);
-
-            const tbody = document.getElementById('quake-table-body');
-            tbody.innerHTML = '';
-
-            if (earthquakes.length > 0) {
-              // Helper function to format magnitude to whole number
-              function formatMagnitude(mag) {
-                return parseFloat(mag).toFixed(0);
-              }
-
-              // Helper function to format location string
-              function formatLocation(loc) {
-                return loc;
-              }
-
-              earthquakes.forEach(eq => {
-                const tr = document.createElement('tr');
-                const timeTd = document.createElement('td');
-                timeTd.setAttribute('data-label', 'Time');
-                timeTd.textContent = eq.dateTime;
-                const magTd = document.createElement('td');
-                magTd.setAttribute('data-label', 'Mag');
-                magTd.textContent = formatMagnitude(eq.magnitude);
-                const locTd = document.createElement('td');
-                locTd.setAttribute('data-label', 'Location');
-                locTd.textContent = formatLocation(eq.location);
-                tr.appendChild(timeTd);
-                tr.appendChild(magTd);
-                tr.appendChild(locTd);
-                tbody.appendChild(tr);
-              });
-              document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
-            } else {
-              tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No earthquake data available</td></tr>';
-              document.getElementById('last-updated').textContent = '';
-            }
-          } catch (error) {
-            console.error('Error fetching earthquake data:', error);
-            const tbody = document.getElementById('quake-table-body');
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: red;">Error loading earthquake data: ' + error.message + '</td></tr>';
-            document.getElementById('last-updated').textContent = '';
-          }
-        }
-
-        function loadSampleData() {
-          const tbody = document.getElementById('quake-table-body');
-          tbody.innerHTML = '';
-          sampleEarthquakes.forEach(eq => {
-            const tr = document.createElement('tr');
-            const timeTd = document.createElement('td');
-            timeTd.textContent = eq.dateTime;
-            const magTd = document.createElement('td');
-            magTd.textContent = eq.magnitude;
-            const locTd = document.createElement('td');
-            locTd.textContent = eq.location;
-            tr.appendChild(timeTd);
-            tr.appendChild(magTd);
-            tr.appendChild(locTd);
-            tbody.appendChild(tr);
-          });
-          document.getElementById('last-updated').textContent = 'Last updated: Sample data loaded';
-        }
-
-        fetchEarthquakeData();
-        setInterval(fetchEarthquakeData, 30000);
-      </script>
     </section>
 
     <section class="card animate-fade-in">
@@ -1101,7 +1006,6 @@
   </script>
 </body>
 </html>
-
 
 
 
