@@ -198,35 +198,7 @@
       transform: translateY(1px);
     }
 
-    /* Unified Table */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: var(--spacing-md);
-    }
-
-    .data-table th,
-    .data-table td {
-      padding: var(--spacing-sm);
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .data-table th {
-      background: rgba(0, 0, 0, 0.3);
-      font-weight: 600;
-    }
-
-    .data-table tr:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
     /* Unified Media Player */
-    .media-player {
-      width: 100%;
-      border-radius: var(--radius-sm);
-    }
-
     .youtube-player {
       width: 100%;
       aspect-ratio: 16 / 9;
@@ -234,25 +206,7 @@
       border-radius: var(--radius-sm);
     }
 
-    /* Unified Links */
-    .link-list {
-      list-style: none;
-    }
 
-    .link-list li {
-      margin-bottom: var(--spacing-xs);
-    }
-
-    .link-list a {
-      color: var(--accent-color);
-      text-decoration: none;
-      transition: color var(--transition-fast);
-    }
-
-    .link-list a:hover {
-      color: var(--text-secondary);
-      text-decoration: underline;
-    }
 
     /* Unified Security Section */
     .security-section {
@@ -481,6 +435,41 @@
       .lotto-card {
         padding: 0.5rem;
       }
+      .lotto-table {
+        display: block;
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .lotto-table thead,
+      .lotto-table tbody,
+      .lotto-table th,
+      .lotto-table td,
+      .lotto-table tr {
+        display: block;
+      }
+      .lotto-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+      .lotto-table tr {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+      }
+      .lotto-table td {
+        display: block;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.5rem;
+        text-align: left;
+        word-wrap: break-word;
+      }
+      .lotto-table td:before {
+        content: attr(data-label) ": ";
+        font-weight: 600;
+        color: var(--accent-color);
+      }
     }
   </style>
 </head>
@@ -516,63 +505,23 @@
 
     <!-- PHIVOLCS Latest Earthquakes -->
     <section class="card animate-fade-in">
-      <h2 class="card-title" style="color: var(--accent-color); text-align: center;">PHIVOLCS Latest Earthquakes</h2>
-      <table class="responsive-table" style="border-collapse: collapse; width: 100%; max-width: 600px; margin: 0 auto; border: 1px solid #444; font-family: Arial, sans-serif; font-size: 14px; background-color: #1e1e1e; color: #fff;">
-        <thead>
-          <tr style="background-color: #2d2d2d;">
-            <th style="border: 1px solid #444; padding: 8px; text-align: left; color: #fff;">Date-Time (Philippine Time)</th>
-            <th style="border: 1px solid #444; padding: 8px; text-align: left; color: #fff;">Magnitude</th>
-            <th style="border: 1px solid #444; padding: 8px; text-align: left; color: #fff;">Location</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 06:14 PM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">2.2</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">011 km S 47° E of Manukan (Zamboanga Del Norte)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 05:29 PM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">1.7</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">014 km N 18° E of Paluan (Occidental Mindoro)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 04:48 PM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">2</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">018 km S 17° E of General Luna (Surigao Del Norte)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 02:27 PM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">3.1</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">006 km S 89° W of Calatagan (Batangas)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 01:56 PM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">3.2</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">007 km S 84° W of Datu Blah T. Sinsuat (Maguindanao Del Norte)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 01:32 PM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">3.5</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">032 km S 87° E of Doña Remedios Trinidad (Bulacan)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 11:45 AM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">2.6</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">006 km S 54° W of Kiblawan (Davao Del Sur)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 11:41 AM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">2.8</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">009 km N 03° E of Prieto Diaz (Sorsogon)</td>
-          </tr>
-          <tr>
-            <td data-label="Date-Time (Philippine Time)" style="border: 1px solid #444; padding: 8px; color: #fff;">26 September 2025 - 09:31 AM</td>
-            <td data-label="Magnitude" style="border: 1px solid #444; padding: 8px; color: #fff;">2.3</td>
-            <td data-label="Location" style="border: 1px solid #444; padding: 8px; word-break: break-word; color: #fff;">059 km S 77° E of Jose Abad Santos (Davao Occidental)</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="lotto-card" aria-label="PHIVOLCS earthquake data">
+        <div style="display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:8px;">
+          <div>
+            <h1 class="lotto-h1">🌋 PHIVOLCS Latest Earthquakes</h1>
+            <div class="lotto-small">Refreshes every 5 minutes.</div>
+          </div>
+          <div>
+            <button class="lotto-refresh" id="phivolcsRefresh">Refresh now</button>
+            <span id="phivolcsStatus" class="lotto-small"></span>
+          </div>
+        </div>
+        <div id="phivolcsContainer" aria-live="polite">
+          <div class="lotto-loading" id="phivolcsLoading">Loading earthquake data…</div>
+        </div>
+        <div class="lotto-timestamp" id="phivolcsUpdated"></div>
+        <div id="phivolcsError" class="lotto-error" style="display:none;"></div>
+      </div>
     </section>
 
     <section class="card animate-fade-in">
@@ -647,27 +596,7 @@
       </div>
     </section>
 
-    <!-- Entertainment Portal -->
-    <section class="card animate-fade-in">
-      <div class="card-header">
-        <h2 class="card-title">🎬 Entertainment Portal</h2>
-        <p class="card-subtitle">Premium streaming services</p>
-      </div>
-      <ul class="link-list">
-        <li><a href="http://kk.ct.ws" target="_blank" rel="noopener noreferrer">KK Streaming Portal</a></li>
-        <li><a href="https://www.lookmovie2.to" target="_blank" rel="noopener noreferrer">LookMovie Premium</a></li>
-        <li><a href="https://ww7.123moviesfree.net/home" target="_blank" rel="noopener noreferrer">123Movies Free</a></li>
-        <li><a href="https://movies2watch.tv/home" target="_blank" rel="noopener noreferrer">Movies2Watch</a></li>
-        <li><a href="https://film-haven.vercel.app" target="_blank" rel="noopener noreferrer">Film Haven</a></li>
-        <li><a href="https://m4uhd.com.co/home" target="_blank" rel="noopener noreferrer">M4UHD</a></li>
-        <li><a href="https://vegamovies.menu" target="_blank" rel="noopener noreferrer">VG List</a></li>
-        <li><a href="https://fmovieszz.lol/home" target="_blank" rel="noopener noreferrer">FMovies Zone</a></li>
-        <li><a href="https://nunflix.org" target="_blank" rel="noopener noreferrer">NunFlix</a></li>
-        <li><a href="https://putlocker.pe/home" target="_blank" rel="noopener noreferrer">Putlocker</a></li>
-         <li><a href="https://braflix.watch" target="_blank" rel="noopener noreferrer">braflix</a></li>
-        <li><a href="https://en.fmoviesz-to.com/home" target="_blank" rel="noopener noreferrer">fmoviesz</a></li>
-      </ul>
-    </section>
+
 
     <!-- Security Section -->
     <section class="card animate-fade-in">
@@ -936,39 +865,45 @@
       return rows;
     }
 
-    function buildTable(data) {
+    function buildTable(data, container = tableContainer) {
       if (!data || data.length === 0) {
-        tableContainer.innerHTML = "<div class='small'>No data available.</div>";
+        container.innerHTML = "<div class='lotto-small'>No data available.</div>";
         return;
       }
       const thead = data[0];
       const bodyRows = data.slice(1);
 
       const table = document.createElement("table");
+      table.className = "lotto-table";
       const trHead = document.createElement("tr");
       thead.forEach(h => {
         const th = document.createElement("th");
+        th.className = "lotto-th";
         th.textContent = h;
         trHead.appendChild(th);
       });
       const theadEl = document.createElement("thead");
+      theadEl.className = "lotto-thead";
       theadEl.appendChild(trHead);
       table.appendChild(theadEl);
 
       const tbody = document.createElement("tbody");
       bodyRows.forEach(row => {
         const tr = document.createElement("tr");
-        row.forEach(cell => {
+        tr.className = "lotto-tr";
+        row.forEach((cell, index) => {
           const td = document.createElement("td");
+          td.className = "lotto-td";
           td.textContent = cell;
+          td.setAttribute('data-label', thead[index]);
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
 
-      tableContainer.innerHTML = "";
-      tableContainer.appendChild(table);
+      container.innerHTML = "";
+      container.appendChild(table);
     }
 
     async function fetchAndRender() {
@@ -1003,6 +938,55 @@
     fetchAndRender();
     // periodic refresh every 30s
     refreshIntervalId = setInterval(fetchAndRender, 30000);
+
+    // === PHIVOLCS Worker URL ===
+    const PHIVOLCS_URL = "https://phivolcs.22afed28-f0b2-46d0-8804-c90e25c90bd4.workers.dev/";
+    // ============================================
+
+    const phivolcsContainer = document.getElementById("phivolcsContainer");
+    const phivolcsError = document.getElementById("phivolcsError");
+    const phivolcsUpdated = document.getElementById("phivolcsUpdated");
+    const phivolcsStatus = document.getElementById("phivolcsStatus");
+    const phivolcsLoading = document.getElementById("phivolcsLoading");
+    const phivolcsRefresh = document.getElementById("phivolcsRefresh");
+
+    let phivolcsRefreshIntervalId = null;
+
+    async function fetchPhivolcsAndRender() {
+      phivolcsStatus.textContent = "Fetching…";
+      phivolcsError.style.display = "none";
+      phivolcsLoading.style.display = "inline-block";
+      try {
+        console.log("Fetching PHIVOLCS data from:", PHIVOLCS_URL);
+        const resp = await fetch(PHIVOLCS_URL, { cache: "no-cache" });
+        console.log("Response status:", resp.status);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const text = await resp.text();
+        let parsed = parseCSV(text).slice(0, 11); // Header + top 10 rows
+        if (parsed.length > 0) {
+          parsed[0] = parsed[0].map(h => h.replace(/\s*\([^)]*\)/g, ''));
+        }
+        buildTable(parsed, phivolcsContainer);
+        const now = new Date();
+        phivolcsUpdated.textContent = "Last updated: " + now.toLocaleString("en-US", { hour12: true });
+        phivolcsStatus.textContent = "";
+      } catch (err) {
+        phivolcsError.textContent = "Failed to load PHIVOLCS data: " + err.message;
+        phivolcsError.style.display = "block";
+        phivolcsStatus.textContent = "Error";
+      } finally {
+        phivolcsLoading.style.display = "none";
+      }
+    }
+
+    phivolcsRefresh.addEventListener("click", () => {
+      fetchPhivolcsAndRender();
+    });
+
+    // initial load
+    fetchPhivolcsAndRender();
+    // periodic refresh every 5 minutes
+    phivolcsRefreshIntervalId = setInterval(fetchPhivolcsAndRender, 300000);
   </script>
 </body>
 </html>
