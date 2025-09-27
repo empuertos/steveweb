@@ -546,7 +546,7 @@
         <div style="display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:8px;">
           <div>
             <h1 class="lotto-h1">🌋 PHIVOLCS Latest Earthquakes</h1>
-            <div class="lotto-small">Refreshes every second.</div>
+            <div class="lotto-small">Refreshes every 10 seconds.</div>
           </div>
           <div>
             <button class="lotto-refresh" id="phivolcsRefresh">Refresh now</button>
@@ -1007,7 +1007,7 @@
         this.loadingEl = document.getElementById("phivolcsLoading");
         this.refreshBtn = document.getElementById("phivolcsRefresh");
         this.maxRows = 10; // Top 10 earthquakes
-        this.refreshInterval = 1000; // 1 second
+        this.refreshInterval = 10000; // 10 seconds
         this.retryAttempts = 3;
         this.retryDelay = 2000;
 
