@@ -939,54 +939,257 @@
     // periodic refresh every 30s
     refreshIntervalId = setInterval(fetchAndRender, 30000);
 
-    // === PHIVOLCS Worker URL ===
-    const PHIVOLCS_URL = "https://phivolcs.22afed28-f0b2-46d0-8804-c90e25c90bd4.workers.dev/";
-    // ============================================
+    // === PHIVOLCS Manager Class ===
+    class PhivolcsManager {
+      constructor() {
+        this.url = "https://phivolcs.22afed28-f0b2-46d0-8804-c90e25c90bd4.workers.dev/";
+        this.container = document.getElementById("phivolcsContainer");
+        this.errorEl = document.getElementById("phivolcsError");
+        this.updatedEl = document.getElementById("phivolcsUpdated");
+        this.statusEl = document.getElementById("phivolcsStatus");
+        this.loadingEl = document.getElementById("phivolcsLoading");
+        this.refreshBtn = document.getElementById("phivolcsRefresh");
+        this.maxRows = 10; // Top 10 earthquakes
+        this.refreshInterval = 300000; // 5 minutes
+        this.retryAttempts = 3;
+        this.retryDelay = 2000;
 
-    const phivolcsContainer = document.getElementById("phivolcsContainer");
-    const phivolcsError = document.getElementById("phivolcsError");
-    const phivolcsUpdated = document.getElementById("phivolcsUpdated");
-    const phivolcsStatus = document.getElementById("phivolcsStatus");
-    const phivolcsLoading = document.getElementById("phivolcsLoading");
-    const phivolcsRefresh = document.getElementById("phivolcsRefresh");
+        this.init();
+      }
 
-    let phivolcsRefreshIntervalId = null;
+      init() {
+        this.refreshBtn.addEventListener("click", () => this.fetchData());
+        this.fetchData();
+        this.startAutoRefresh();
+      }
 
-    async function fetchPhivolcsAndRender() {
-      phivolcsStatus.textContent = "Fetching…";
-      phivolcsError.style.display = "none";
-      phivolcsLoading.style.display = "inline-block";
-      try {
-        console.log("Fetching PHIVOLCS data from:", PHIVOLCS_URL);
-        const resp = await fetch(PHIVOLCS_URL, { cache: "no-cache" });
-        console.log("Response status:", resp.status);
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const text = await resp.text();
-        let parsed = parseCSV(text).slice(0, 11); // Header + top 10 rows
+      calculateDirection(lat, long) {
+        const refLat = 14.5995; // Manila latitude
+        const refLong = 120.9842; // Manila longitude
+        const dLat = (lat - refLat) * Math.PI / 180;
+        const dLong = (long - refLong) * Math.PI / 180;
+        const y = Math.sin(dLong) * Math.cos(lat * Math.PI / 180);
+        const x = Math.cos(refLat * Math.PI / 180) * Math.sin(lat * Math.PI / 180) -
+                  Math.sin(refLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.cos(dLong);
+        const bearing = Math.atan2(y, x) * 180 / Math.PI;
+        const normalizedBearing = (bearing + 360) % 360;
+        const deg = Math.round(normalizedBearing);
+        const ns = deg > 180 ? 'S' : 'N';
+        const ew = (deg > 90 && deg < 270) ? 'W' : 'E';
+        return `${ns} ${deg}° ${ew}`;
+      }
+
+      async fetchData(attempt = 1) {
+        this.setStatus("Fetching…");
+        this.hideError();
+        this.showLoading();
+
+        try {
+          const response = await fetch(this.url, { cache: "no-cache" });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const text = await response.text();
+          const data = this.parseAndProcessData(text);
+          this.renderTable(data);
+          this.updateTimestamp();
+          this.setStatus("");
+          this.cacheData(data); // Cache for offline/fallback
+        } catch (error) {
+          console.error("PHIVOLCS fetch error:", error);
+          if (attempt < this.retryAttempts) {
+            this.setStatus(`Retrying... (${attempt}/${this.retryAttempts})`);
+            setTimeout(() => this.fetchData(attempt + 1), this.retryDelay);
+          } else {
+            this.showError("Failed to load PHIVOLCS data: " + error.message);
+            this.setStatus("Error");
+            // Fallback to cached data
+            const cached = this.getCachedData();
+            if (cached) {
+              this.renderTable(cached);
+              this.setStatus("Using cached data");
+            }
+          }
+        } finally {
+          this.hideLoading();
+        }
+      }
+
+      parseAndProcessData(csvText) {
+        let parsed = this.parseCSV(csvText).slice(0, this.maxRows + 1); // Header + top 10
         if (parsed.length > 0) {
           parsed[0] = parsed[0].map(h => h.replace(/\s*\([^)]*\)/g, ''));
+          const headers = parsed[0];
+          const latIndex = headers.indexOf('Latitude');
+          const longIndex = headers.indexOf('Longitude');
+          const depthIndex = headers.indexOf('Depth');
+          const locIndex = headers.indexOf('Location');
+          if (latIndex !== -1 && longIndex !== -1 && depthIndex !== -1 && locIndex !== -1) {
+            parsed.slice(1).forEach(row => {
+              const lat = parseFloat(row[latIndex]);
+              const long = parseFloat(row[longIndex]);
+              const depth = row[depthIndex] || '000';
+              const loc = row[locIndex] || 'Unknown';
+              const direction = this.calculateDirection(lat, long);
+              row[locIndex] = `${depth.toString().padStart(3, '0')}km ${direction} of ${loc}`;
+            });
+          }
+          // Hide columns
+          const columnsToHide = ['Latitude', 'Longitude', 'Depth'];
+          const indicesToHide = headers.map((h, i) => columnsToHide.includes(h) ? i : -1).filter(i => i !== -1);
+          parsed = parsed.map(row => row.filter((_, i) => !indicesToHide.includes(i)));
         }
-        buildTable(parsed, phivolcsContainer);
+        return parsed;
+      }
+
+      parseCSV(text) {
+        // Improved CSV parsing to handle quoted fields with commas
+        const rows = [];
+        const lines = text.trim().split("\n");
+        for (let line of lines) {
+          const row = [];
+          let current = '';
+          let inQuotes = false;
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              row.push(current.replace(/^"|"$/g, ''));
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          row.push(current.replace(/^"|"$/g, ''));
+          rows.push(row);
+        }
+        return rows;
+      }
+
+      renderTable(data) {
+        if (!data || data.length === 0) {
+          this.container.innerHTML = "<div class='lotto-small'>No data available.</div>";
+          return;
+        }
+        const thead = data[0];
+        const bodyRows = data.slice(1);
+
+        const table = document.createElement("table");
+        table.className = "lotto-table responsive-table";
+        table.setAttribute('role', 'table');
+        table.setAttribute('aria-label', 'PHIVOLCS Latest Earthquakes');
+
+        // Header
+        const theadEl = document.createElement("thead");
+        const trHead = document.createElement("tr");
+        thead.forEach(h => {
+          const th = document.createElement("th");
+          th.className = "lotto-th";
+          th.textContent = h;
+          th.setAttribute('scope', 'col');
+          trHead.appendChild(th);
+        });
+        theadEl.appendChild(trHead);
+        table.appendChild(theadEl);
+
+        // Body
+        const tbody = document.createElement("tbody");
+        bodyRows.forEach((row, rowIndex) => {
+          const tr = document.createElement("tr");
+          tr.className = "lotto-tr";
+          tr.setAttribute('role', 'row');
+          row.forEach((cell, index) => {
+            const td = document.createElement("td");
+            td.className = "lotto-td";
+            td.textContent = cell;
+            td.setAttribute('data-label', thead[index]);
+            td.setAttribute('role', 'cell');
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        // Efficient DOM update: Clear and replace
+        this.container.innerHTML = "";
+        this.container.appendChild(table);
+      }
+
+      updateTimestamp() {
         const now = new Date();
-        phivolcsUpdated.textContent = "Last updated: " + now.toLocaleString("en-US", { hour12: true });
-        phivolcsStatus.textContent = "";
-      } catch (err) {
-        phivolcsError.textContent = "Failed to load PHIVOLCS data: " + err.message;
-        phivolcsError.style.display = "block";
-        phivolcsStatus.textContent = "Error";
-      } finally {
-        phivolcsLoading.style.display = "none";
+        this.updatedEl.textContent = "Last updated: " + now.toLocaleString("en-US", { hour12: true });
+      }
+
+      setStatus(text) {
+        this.statusEl.textContent = text;
+      }
+
+      showError(message) {
+        this.errorEl.textContent = message;
+        this.errorEl.style.display = "block";
+      }
+
+      hideError() {
+        this.errorEl.style.display = "none";
+      }
+
+      showLoading() {
+        this.loadingEl.style.display = "inline-block";
+      }
+
+      hideLoading() {
+        this.loadingEl.style.display = "none";
+      }
+
+      startAutoRefresh() {
+        this.interval = setInterval(() => this.fetchData(), this.refreshInterval);
+      }
+
+      stopAutoRefresh() {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+      }
+
+      cacheData(data) {
+        try {
+          localStorage.setItem('phivolcs_cache', JSON.stringify({
+            data,
+            timestamp: Date.now()
+          }));
+        } catch (e) {
+          console.warn('Caching failed:', e);
+        }
+      }
+
+      getCachedData() {
+        try {
+          const cached = localStorage.getItem('phivolcs_cache');
+          if (!cached) return null;
+          const { data, timestamp } = JSON.parse(cached);
+          const age = Date.now() - timestamp;
+          // Use cache if less than 30 min old
+          if (age < 1800000) {
+            return data;
+          }
+        } catch (e) {
+          console.warn('Cache read failed:', e);
+        }
+        return null;
+      }
+
+      destroy() {
+        this.stopAutoRefresh();
+        this.refreshBtn.removeEventListener("click", () => this.fetchData());
       }
     }
 
-    phivolcsRefresh.addEventListener("click", () => {
-      fetchPhivolcsAndRender();
+    // Initialize PHIVOLCS Manager
+    let phivolcsManager;
+    document.addEventListener('DOMContentLoaded', () => {
+      phivolcsManager = new PhivolcsManager();
     });
-
-    // initial load
-    fetchPhivolcsAndRender();
-    // periodic refresh every 5 minutes
-    phivolcsRefreshIntervalId = setInterval(fetchPhivolcsAndRender, 300000);
   </script>
 </body>
 </html>
