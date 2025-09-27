@@ -1143,7 +1143,7 @@
         thead.forEach(h => {
           const th = document.createElement("th");
           th.className = "lotto-th";
-          th.textContent = h;
+          th.innerHTML = `<strong>${h}</strong>`;
           th.setAttribute('scope', 'col');
           trHead.appendChild(th);
         });
